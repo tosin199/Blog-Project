@@ -5,7 +5,7 @@ module.exports = (sequelize, Sequelize)=> {
             id:{
                 type:Sequelize.INTEGER,
                 allowNull : false,
-                autoincrement: true,
+                autoIncrement: true,
                 primaryKey: true
             },
             postId : {
@@ -19,6 +19,7 @@ module.exports = (sequelize, Sequelize)=> {
         },
         reaction:{
             type:Sequelize.BOOLEAN,
+            defaultValue: 0,
             allowNull: false
         }
     });
