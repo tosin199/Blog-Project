@@ -17,6 +17,7 @@ async function createUser(req,res){
 async function deleteUser(req,res){
   userId = req.params.id;
   const user = await models.user.destroy({where:{id:req.params.id}});
+  res.json({mssg:'user deleted'})
 
 }
 
