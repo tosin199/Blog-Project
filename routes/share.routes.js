@@ -5,4 +5,5 @@ const shareCntrl = require ('../controllers/share.controllers');
 router.get ('/', shareCntrl.getShare);
 router.post ('/create', shareCntrl.createShare);
 
-module.exports = share;
+
+module.exports = router;

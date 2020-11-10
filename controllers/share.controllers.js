@@ -2,17 +2,17 @@ const models = require('../models/index');
 
 async function getShare(req, res) {
     var data = req.body;
-    const share = await models.news.findAll();
-    res.json(share);
+    const share = await models.share.findAll();
+    res.json("Welcome");
 }
 
-async function createShare(treq, res) {
+async function createShare(req, res) {
     var data = req.body;
-    var shareId = await models.share.create(data);
+    var share = await models.share.create(data);
     res.json(share);
 }
 
 module.exports = {
     getShare,
     createShare
-}
+}          

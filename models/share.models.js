@@ -14,6 +14,11 @@ module.exports = (sequelize,Sequelize) =>{
     userId: {
         type: Sequelize.INTEGER
     },
+
+    status: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false
+    }
    
     });
     return share;
