@@ -15,11 +15,12 @@ const db ={};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
+// User.hasOne(Sub);
+
 db.user= User(sequelize,Sequelize);
-
-
-
 db.sub= Sub(sequelize,Sequelize);
+
+db.user.hasOne(db.sub);
 
 
 

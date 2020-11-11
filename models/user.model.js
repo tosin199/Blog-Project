@@ -1,4 +1,3 @@
-
 module.exports = (sequelize,Sequelize) => {
   const User =  sequelize.define(
     'user',
@@ -28,6 +27,5 @@ module.exports = (sequelize,Sequelize) => {
       }
     }
   );
-
   return User;
 } 

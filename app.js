@@ -5,12 +5,13 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var usersRouter = require('./routes/users');
+var subRouter = require('./routes/subscription')
 
 const db = require('./models');
 
 var app = express();
 
-db.sequelize.sync();
+db.sequelize.sync(); //force:true
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -23,7 +24,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/user', usersRouter);
-
+app.use('/subscriptions',subRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

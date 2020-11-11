@@ -4,4 +4,7 @@ const controller = require('../controllers/subscriptions.controller');
 
 router.get('/', controller.getSub);
 router.post('/', controller.createSubs);
-router.delete('/',controller.deleteSubs);
+router.delete('/:id',controller.deleteSubs);
+
+
+module.exports = router;

@@ -9,7 +9,7 @@ async function  getUser(req,res){
 
 async function createUser(req,res){
   var data = req.body;
-  const user = await models.user.create({firstname:data.firstname, lastname:data.firstname,email:data.email, password:data.password});
+  const user = await models.user.create({firstname:data.firstname, lastname:data.lastname,email:data.email, password:data.password});
   res.json(user);
 
 }
