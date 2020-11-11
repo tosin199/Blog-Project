@@ -23,4 +23,13 @@ module.exports = (sequelize,Sequelize) =>{
     });
     return share;
 
+    // share.associate = function(models){
+    //     share.belongsTo (models.post), {
+    //         foreignKery: {
+    //             allowNull: false
+    //         }
+
+    //     }
+    // }
+
 }
