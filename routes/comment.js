@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-const commentController = require('../controller/comment.controller.js');
+const commentController = require('../controllers/comment.controller.js');
     //Retrieve all reactions 
     router.get('/', commentController.getComment);
 

@@ -25,14 +25,17 @@ db.reaction = reaction(sequelize,Sequelize);
 db.share = share(sequelize, Sequelize);
 db.news = news(sequelize, Sequelize);
 db.post = post(sequelize, Sequelize);
-// User.hasOne(Sub);
-
 db.user= User(sequelize,Sequelize);
 db.sub= Sub(sequelize,Sequelize);
 
 db.user.hasOne(db.sub);
-
-
+db.user.hasMany(db.comment);
+db.user.hasMany(db.share);
+db.reaction.belongsTo(db.user);
+db.news.hasMany(db.post);
+db.post.hasMany(db.reaction);
+db.post.hasMany(db.comment);
+db.post.hasMany(db.share);
 
 
 module.exports = db;

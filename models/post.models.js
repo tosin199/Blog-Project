@@ -6,7 +6,7 @@ module.exports = (sequelize, Sequelize) => {
         autoIncrement: true,
         primaryKey: true
       },
-      catId: {
+      newsId: {
         type: Sequelize.STRING(20),
         allowNull: true,
         primaryKey: false

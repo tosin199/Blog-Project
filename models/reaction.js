@@ -2,21 +2,21 @@ module.exports = (sequelize, Sequelize)=> {
     const reaction = sequelize.define(
         'reaction',
         {
-            id:{
-                type:Sequelize.INTEGER,
-                allowNull : false,
-                autoIncrement: true,
-                primaryKey: true
-            },
-            postId : {
+        id:{
             type:Sequelize.INTEGER,
             allowNull : false,
-            foreignKey: true
+            autoIncrement: true,
+            primaryKey: true
         },
-            userId : {
-            type:Sequelize.INTEGER,
-            allowNull: false             
-        },
+        // postId : {
+        //     type:Sequelize.INTEGER,
+        //     allowNull : false,
+        //     foreignKey: true
+        // },
+        // userId : {
+        //     type:Sequelize.INTEGER,
+        //     allowNull: false             
+        // },
         reaction:{
             type:Sequelize.BOOLEAN,
             defaultValue: 0,

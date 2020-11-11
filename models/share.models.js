@@ -7,13 +7,13 @@ module.exports = (sequelize,Sequelize) =>{
         primaryKey: true
     },
 
-    postId: {
-        type: Sequelize.INTEGER
-    },
+    // postId: {
+    //     type: Sequelize.INTEGER
+    // },
 
-    userId: {
-        type: Sequelize.INTEGER
-    },
+    // userId: {
+    //     type: Sequelize.INTEGER
+    // },
 
     status: {
         type: Sequelize.BOOLEAN,
