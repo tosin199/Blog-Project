@@ -1,5 +1,6 @@
 const connection = require('./config');
 const {Sequelize} = require('sequelize');
+const Comment = require('./comment');
 const reaction = require('./reaction')
 const share = require('./share.models');
 const news = require('./news.models');
@@ -19,6 +20,7 @@ const db ={};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
+db.comment = Comment(sequelize, Sequelize);
 db.reaction = reaction(sequelize,Sequelize);
 db.share = share(sequelize, Sequelize);
 db.news = news(sequelize, Sequelize);
