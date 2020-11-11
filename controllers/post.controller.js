@@ -1,7 +1,7 @@
 const models = require('../models/index');
 
 async function getPost(req, res) {
-    const post = await models.news.findAll();
+    const post = await models.post.findAll();
     res.json(post);
 }
 
@@ -14,7 +14,7 @@ async function createPost(req, res) {
 async function updatePost(req, res) {
     var data = req.body;
     var postId = req.params.id;
-    const post = await models.news.update({Title:data.Title, Content: data.Content},{where: {id:postId}})
+    const post = await models.post.update({Title:data.Title, Content: data.Content},{where: {id:postId}})
     res.json(data);
 }
 
