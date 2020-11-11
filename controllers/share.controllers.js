@@ -3,12 +3,12 @@ const models = require('../models/index');
 async function getShare(req, res) {
     var data = req.body;
     const share = await models.share.findAll();
-    res.json("Welcome");
+    res.json(share);
 }
 
 async function createShare(req, res) {
     var data = req.body;
-    var share = await models.share.create(data);
+    const share = await models.share.create(data);
     res.json(share);
 }
 
