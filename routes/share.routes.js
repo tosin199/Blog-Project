@@ -3,7 +3,8 @@ const router = express.Router();
 const shareCntrl = require ('../controllers/share.controllers');
 
 router.get ('/', shareCntrl.getShare);
-router.post ('/create', shareCntrl.createShare);
+// router.get('/:id',shareCntrl.getOneShare);
+router.post ('/user/:userId/post/:postId', shareCntrl.createShare);
 
 
 module.exports = router;

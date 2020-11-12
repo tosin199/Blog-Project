@@ -1,13 +1,14 @@
 const models = require('../models/index');
 
 async function getPost(req, res) {
-    const post = await models.post.findAll();
+    const post = await models.post.findAll({include:[models.news]});
     res.json(post);
 }
 
 async function createPost(req, res) {
+    newsId = req.params.id;
     var data = req.body;
-    const post = await models.post.create(data);
+    const post = await models.post.create({Title:data.Title,Body:data.Body,newsId:newsId});
     res.json(post);
 }
 

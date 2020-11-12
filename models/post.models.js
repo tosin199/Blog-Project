@@ -6,11 +6,11 @@ module.exports = (sequelize, Sequelize) => {
         autoIncrement: true,
         primaryKey: true
       },
-      newsId: {
-        type: Sequelize.STRING(20),
-        allowNull: true,
-        primaryKey: false
-      },
+      // newsId: {
+      //   type: Sequelize.STRING(20),
+      //   allowNull: true,
+      //   primaryKey: false
+      // },
       Title: {
         type: Sequelize.STRING(200),
         allowNull: true,

@@ -3,12 +3,14 @@ var router = express.Router();
 const controller = require("../controllers/reaction.controller.js");
     //Retrieve all reactions 
     router.get('/', controller.getreaction);
+    //Retrieve reactions of a post
+    router.get('/:id',controller.getOneReaction);
     //Create all reactions
-    router.post('/',controller.createreaction);
+    router.post('/user/:userId/post/:postId',controller.createreaction);
     //Update reactions 
-    router.put('/',controller.updatereaction);
+    router.put('/:id/user/:userId/post/:postId',controller.updatereaction);
     //Delete reactions
-    router.delete('/',controller.destroyreaction);
+    router.delete('/:id',controller.destroyreaction);
 
 // var express = require('express');
 // var router = express.Router();

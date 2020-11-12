@@ -16,7 +16,7 @@ async function updateNews(req, res) {
     var data = req.body;
     var newsId = req.params.id;
     const news = await models.news.update({Name:data.Name, Description: data.Description},{where: {id:newsId}})
-    res.json(data);
+    res.json(news);
 }
 
 async function deleteNews (req, res) {

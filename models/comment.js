@@ -7,16 +7,16 @@ module.exports = function(sequelize, Sequelize){
             primaryKey: true,
         },
 
-        postId: {
-            type: Sequelize.INTEGER,
-            allowNull: false,
+        // postId: {
+        //     type: Sequelize.INTEGER,
+        //     allowNull: false,
 
-        },
+        // },
 
-        userId: {
-            type: Sequelize.INTEGER,
-            allowNull: false,
-        },
+        // userId: {
+        //     type: Sequelize.INTEGER,
+        //     allowNull: false,
+        // },
 
         content: {
             type: Sequelize.TEXT,

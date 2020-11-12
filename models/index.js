@@ -28,14 +28,35 @@ db.post = post(sequelize, Sequelize);
 db.user= User(sequelize,Sequelize);
 db.sub= Sub(sequelize,Sequelize);
 
+//subscription relationship
 db.user.hasOne(db.sub);
+db.sub.belongsTo(db.user);
+
+//comment relationship
 db.user.hasMany(db.comment);
+db.comment.belongsTo(db.user);
+
+//share relationship
 db.user.hasMany(db.share);
+db.share.belongsTo(db.user);
+
+// reaction relationship
 db.reaction.belongsTo(db.user);
+db.user.hasOne(db.reaction)
+
+//news relationship
 db.news.hasMany(db.post);
+db.post.belongsTo(db.news);
+
+//post relationship
 db.post.hasMany(db.reaction);
+db.reaction.belongsTo(db.post)
+
 db.post.hasMany(db.comment);
+db.comment.belongsTo(db.post);
+
 db.post.hasMany(db.share);
+db.share.belongsTo(db.post)
 
 
 module.exports = db;
