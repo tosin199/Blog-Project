@@ -1,15 +1,16 @@
 const models = require('../models/index');
 
 
-async function getComment(req,res){
-    const comment = await models.comment.findAll({include:[models.user]});
-    res.json(comment);
-}
+// async function getComment(req,res){
+//     const comment = await models.comment.findAll({include:[models.user]});
+//     res.json(comment);
+// }
 async function getcommentOfAPost(req,res){
     commentId = req.params.id; 
-    const comment = await models.comment.findAll({include:[models.user]},{where: {id: commentId,userId:req.params.userId,postId:req.params.postId}});
+    const comment = await models.comment.findAndCountAll({include:[models.user]},{where: {id: commentId,userId:req.params.userId,postId:req.params.postId}});
     res.json(comment);  
 }
+
 
 async function createComment(req,res){
     var data = req.body
@@ -35,7 +36,7 @@ async function destroyComment(req,res){
 
 
 module.exports = {
-    getComment,
+    // getComment,
     createComment,
     updateComment,
     destroyComment,

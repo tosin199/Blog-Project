@@ -1,10 +1,12 @@
 
+const { post } = require('../models/index');
 const models = require('../models/index');
 
 async function getNews(req, res) {
     const news = await models.news.findAll();
     res.json(news);
 }
+
 
 async function createNews(req, res) {
     var data = req.body;

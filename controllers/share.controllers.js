@@ -6,11 +6,11 @@ async function getShare(req, res) {
     res.json(share);
 }
 
-// async function getOneShare(req,res){
-//     postId = req.params.id;
-//     const share = await models.share.findAll({include:[models.post]},{where:{postId:postId}});
-//     res.json(share)
-// }
+async function getOneShare(req,res){
+    var postId = req.params.id;
+    const share = await models.share.findAll({ include:[models.user],where:{postId:postId}});
+    res.json(share)
+}
 
 async function createShare(req, res) {
     var data = req.body
@@ -21,5 +21,5 @@ async function createShare(req, res) {
 module.exports = {
     getShare,
     createShare,
-    // getOneShare
+    getOneShare
 }          

@@ -21,8 +21,8 @@
 * Linkedin:https://www.linkedin.com/in/olawoye-lydia-tosin-5563881b2/
 
 #### Abubakar Sadeeq Ismail
-* Github:
-* Twitter:
+* Github:https://github.com/ismaelsadeeq
+* Twitter:https://twitter.com/sadeeq_ismaela
 * Linkedin:
 
 #### Zira Gloria

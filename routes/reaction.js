@@ -2,15 +2,19 @@ var express = require('express');
 var router = express.Router();
 const controller = require("../controllers/reaction.controller.js");
     //Retrieve all reactions 
-    router.get('/', controller.getreaction);
+    router.get('/', controller.getReaction);
     //Retrieve reactions of a post
     router.get('/:id',controller.getOneReaction);
     //Create all reactions
-    router.post('/user/:userId/post/:postId',controller.createreaction);
+    router.post('/like/user/:userId/post/:postId',controller.createReaction);
+    router.post('/dislike/user/:userId/post/:postId',controller.createDislikeReaction);
+
+
     //Update reactions 
-    router.put('/:id/user/:userId/post/:postId',controller.updatereaction);
+    // router.put('/:id/user/:userId/post/:postId',controller.updatereaction);
     //Delete reactions
-    router.delete('/:id',controller.destroyreaction);
+    router.delete('/like/user/:userId/post/:postId',controller.destroyReaction);
+    router.delete('/dislike/user/:userId/post/:postId',controller.destroyDislikeReaction);
 
 // var express = require('express');
 // var router = express.Router();

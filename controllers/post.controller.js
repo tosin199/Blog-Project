@@ -4,6 +4,12 @@ async function getPost(req, res) {
     const post = await models.post.findAll({include:[models.news]});
     res.json(post);
 }
+async function getPosts(req,res){
+    newsId = req.params.id;
+    const posts = await models.post.findAndCountAll({where:{newsId:newsId}})
+    res.json(posts)
+
+}
 
 async function createPost(req, res) {
     newsId = req.params.id;
@@ -28,6 +34,7 @@ async function deletePost (req, res) {
 
 module.exports = {
     getPost,
+    getPosts,
     createPost,
     updatePost,
     deletePost,

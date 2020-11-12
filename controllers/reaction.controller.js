@@ -1,6 +1,6 @@
 const models = require('../models/index');
 // const controller = require('../models/reaction');
-async function getreaction(req,res){
+async function getReaction(req,res){
     const reaction = await models.reaction.findAll({include:[models.user]});
     res.json(reaction);
 }
@@ -8,27 +8,73 @@ async function getOneReaction(req,res){
     const reaction = await models.reaction.findAll({where:{postId:req.params.id}},{include:[models.user]});
     res.json(reaction);    
 }
-async function createreaction(req,res){
-    var data = req.body
-    const reaction = await models.reaction.create({reaction:data.reaction,userId:req.params.userId,postId:req.params.postId},{where:{reaction:false}})
-    res.json(reaction);
+async function createReaction(req,res){
+    // var data = req.body
+    var reactions, msg;
+    const attribute = req.params
+    const reactionExist = await models.reaction.findOne({where:{userId:attribute.userId,postId:attribute.postId}})
+    if (reactionExist){ 
+        reactions = await models.reaction.update({reaction:true,userId:req.params.userId,postId:req.params.postId},{where: {id:reactionExist.id}});
+        msg = 'updated like'
+
+    } else {
+        reactions = await models.reaction.create({reaction:true,userId:attribute.userId,postId:attribute.postId});
+        msg = 'created like'
+    
+    }
+    res.json(msg);
+    
 }
-async function updatereaction(req,res){
-    var Id= req.params.id;
-    var data = req.body;
-    const reaction = await models.reaction.update({reaction:data.reaction,userId:req.params.userId,postId:req.params.postId},{where: {id:Id}});
-    res.json(reaction);
+
+async function createDislikeReaction(req,res){
+    // var data = req.body
+    var reactions, msg;
+    const attribute = req.params
+    const dislikeReactionExist = await models.reaction.findOne({where:{userId:attribute.userId,postId:attribute.postId}})
+    if (dislikeReactionExist){ 
+        reactions = await models.reaction.update({reaction:false,userId:req.params.userId,postId:req.params.postId},{where: {id:dislikeReactionExist.id}});
+        msg = 'updated dislike'
+    
+    } else {
+        reactions = await models.reaction.create({reaction:false,userId:attribute.userId,postId:attribute.postId});
+        msg = 'created dislike';
+    }
+    res.json(msg);
+    
 }
-async function destroyreaction(req,res){
+
+
+async function destroyReaction(req,res){
     var userId = req.params.id
-    var data = req.body;
-    const reaction = await models.reaction.destroy({where: {id:userId}});
-      res.json(reaction);
+    // var data = req.body;
+    var reactions, msg;
+    const attribute = req.params;
+    const reactionExist =  await models.reaction.findOne({where:{userId:attribute.userId, reaction:true, postId:attribute.postId}});
+    if(reactionExist){
+        reactions = await models.reaction.destroy({where: {id:reactionExist.id}});
+        msg = 'removed like'
+    } else {msg = "Nothing to like"}
+      res.json(msg);
 }
+
+async function destroyDislikeReaction(req,res){
+    var userId = req.params.id
+    // var data = req.body;
+    var reactions, msg;
+    const attribute = req.params;
+    const reactionExist =  await models.reaction.findOne({where:{userId:attribute.userId,reaction:false, postId:attribute.postId}});
+    if(reactionExist){
+        reactions = await models.reaction.destroy({where: {id:reactionExist.id}});
+        msg = 'removed dislike'
+    } else { msg = "Nothing to Dislike"}
+    res.json(msg);
+}
+
 module.exports = {
-    getreaction,
-    createreaction,
-    updatereaction,
-    destroyreaction,
+    getReaction,
+    createReaction,
+    destroyDislikeReaction,
+    createDislikeReaction,
+    destroyReaction,
     getOneReaction
 }
