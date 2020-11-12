@@ -8,15 +8,6 @@ module.exports = (sequelize, Sequelize)=> {
             autoIncrement: true,
             primaryKey: true
         },
-        // postId : {
-        //     type:Sequelize.INTEGER,
-        //     allowNull : false,
-        //     foreignKey: true
-        // },
-        // userId : {
-        //     type:Sequelize.INTEGER,
-        //     allowNull: false             
-        // },
         reaction:{
             type:Sequelize.BOOLEAN,
             defaultValue: false,

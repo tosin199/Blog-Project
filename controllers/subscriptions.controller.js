@@ -1,4 +1,3 @@
-// const { where } = require('sequelize/types');
 const models = require('../models/index');
 
 async function getSub(req,res){

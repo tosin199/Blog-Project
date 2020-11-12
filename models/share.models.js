@@ -6,15 +6,6 @@ module.exports = (sequelize,Sequelize) =>{
         autoIncrement: true,
         primaryKey: true
     },
-
-    // postId: {
-    //     type: Sequelize.INTEGER
-    // },
-
-    // userId: {
-    //     type: Sequelize.INTEGER
-    // },
-
     status: {
         type: Sequelize.BOOLEAN,
         allowNull: false
