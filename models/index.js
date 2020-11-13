@@ -1,13 +1,7 @@
 const connection = require('./config');
 const {Sequelize} = require('sequelize');
-const Comment = require('./comment');
-const reaction = require('./reaction')
-const share = require('./share.models');
-const news = require('./news.models');
-const post = require('./post.models');
-const User = require('./user.model');
 
-const Sub = require('./subscription.model');
+const model = require('./models');
 const { user } = require('./config');
 
 const sequelize = new Sequelize(connection.db, connection.user, connection.password, {
@@ -20,13 +14,15 @@ const db ={};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.comment = Comment(sequelize, Sequelize);
-db.reaction = reaction(sequelize,Sequelize);
-db.share = share(sequelize, Sequelize);
-db.news = news(sequelize, Sequelize);
-db.post = post(sequelize, Sequelize);
-db.user= User(sequelize,Sequelize);
-db.sub= Sub(sequelize,Sequelize);
+const Model = new model(sequelize,Sequelize); 
+
+db.comment = Model.comment();
+db.reaction = Model.reaction();
+db.share = Model.share();
+db.category = Model.category();
+db.post = Model.post();
+db.user= Model.User();
+db.sub=Model.Sub();
 
 //subscription relationship
 db.user.hasOne(db.sub);
@@ -44,9 +40,9 @@ db.share.belongsTo(db.user);
 db.reaction.belongsTo(db.user);
 db.user.hasOne(db.reaction)
 
-//news relationship
-db.news.hasMany(db.post);
-db.post.belongsTo(db.news);
+//category relationship
+db.category.hasMany(db.post);
+db.post.belongsTo(db.category);
 
 //post relationship
 db.post.hasMany(db.reaction);

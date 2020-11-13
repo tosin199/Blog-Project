@@ -14,14 +14,14 @@ async function getPosts(req,res){
 async function createPost(req, res) {
     newsId = req.params.id;
     var data = req.body;
-    const post = await models.post.create({Title:data.Title,Body:data.Body,newsId:newsId});
+    const post = await models.post.create({title:data.title,body:data.body,newsId:newsId});
     res.json(post);
 }
 
 async function updatePost(req, res) {
     var data = req.body;
     var postId = req.params.id;
-    const post = await models.post.update({Title:data.Title, Content: data.Content},{where: {id:postId}})
+    const post = await models.post.update({title:data.title, content: data.content},{where: {id:postId}})
     res.json(data);
 }
 
