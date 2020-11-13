@@ -3,6 +3,7 @@ var router = express.Router();
 
 const commentController = require('../controllers/comment.controller.js');
     //Retrieve all comment
+    router.get('/:postId', commentController.getAllcommentOfAPost)
     router.get('/:id/user/:userId/post/:postId',commentController. getcommentOfAPost);
     //Create all comment of a post
     router.post('/user/:userId/post/:postId',commentController.createComment);

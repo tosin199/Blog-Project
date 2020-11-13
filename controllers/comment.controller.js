@@ -1,5 +1,11 @@
 const models = require('../models/index');
 
+
+async function getAllcommentOfAPost(req,res){
+    const comment = await models.comment.findAndCountAll({include:[models.user]},{where: {postId:req.params.postId}});
+    res.json(comment);  
+}
+
 async function getcommentOfAPost(req,res){
     commentId = req.params.id; 
     const comment = await models.comment.findAndCountAll({include:[models.user]},{where: {id: commentId,userId:req.params.userId,postId:req.params.postId}});
@@ -31,6 +37,7 @@ async function destroyComment(req,res){
 
 
 module.exports = {
+    getAllcommentOfAPost,
     createComment,
     updateComment,
     destroyComment,
