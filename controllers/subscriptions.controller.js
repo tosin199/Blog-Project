@@ -1,7 +1,7 @@
 const models = require('../models/index');
 
 async function getSub(req,res){
-  const sub = await models.sub.findAll({include:[models.user]} );
+  const sub = await models.sub.findAll({include:[models.user]});
   res.json(sub);
 
 };

@@ -2,7 +2,7 @@ const models = require('../models/index');
 
 async function  getUser(req,res){
   userId = req.params.id;
-  const user = await models.user.findAll({where:{id:userId}})
+  const user = await models.user.findOne({where:{id:userId},attributes:['firstname','lastname']})
   res.json(user);
 
 }

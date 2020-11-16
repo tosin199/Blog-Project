@@ -3,7 +3,7 @@ const { post } = require('../models/index');
 const models = require('../models/index');
 
 async function getCategory(req, res) {
-    const category = await models.category.findAll();
+    const category = await models.category.findAll({attributes:['name','description']});
     res.json(category);
 }
 
