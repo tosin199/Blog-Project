@@ -1,23 +1,35 @@
 const models = require('../models/index');
 
 async function getReaction(req,res){
-    const reaction = await models.reaction.findAll({include:[models.user]});
+    const reaction = await models.reaction.findAll({
+        include:[models.user]
+    });
     res.json(reaction);
 }
 async function getOneReaction(req,res){
-    const reaction = await models.reaction.findAll({where:{postId:req.params.id}},{include:[models.user]});
+    const reaction = await models.reaction.findAndCountAll(
+        {where:{postId:req.params.id}},
+        {include:[models.user]}
+    );
     res.json(reaction);    
 }
 async function createReaction(req,res){
     var reactions, msg;
     const attribute = req.params
-    const reactionExist = await models.reaction.findOne({where:{userId:attribute.userId,postId:attribute.postId}})
+    const reactionExist = await models.reaction.findOne({
+        where:{userId:attribute.userId,postId:attribute.postId}
+    });
     if (reactionExist){ 
-        reactions = await models.reaction.update({reaction:true,userId:attribute.userId,postId:attribute.postId},{where: {id:reactionExist.id}});
+        reactions = await models.reaction.update({
+            reaction:true,userId:attribute.userId,postId:attribute.postId
+        },{where: {id:reactionExist.id}}
+        );
         msg = 'updated like'
 
     } else {
-        reactions = await models.reaction.create({reaction:true,userId:attribute.userId,postId:attribute.postId});
+        reactions = await models.reaction.create({
+            reaction:true,userId:attribute.userId,postId:attribute.postId}
+        );
         msg = 'created like'
     
     }
@@ -25,16 +37,22 @@ async function createReaction(req,res){
     
 }
 
-async function createDislikeReaction(req,res){
+async function createDislikeReaction(req,res){{order:['createdAt']}
     var reactions, msg;
     const attribute = req.params
-    const dislikeReactionExist = await models.reaction.findOne({where:{userId:attribute.userId,postId:attribute.postId}})
+    const dislikeReactionExist = await models.reaction.findOne({
+        where:{userId:attribute.userId,postId:attribute.postId}})
     if (dislikeReactionExist){ 
-        reactions = await models.reaction.update({reaction:false,userId:attribute.userId,postId:attribute.postId},{where: {id:dislikeReactionExist.id}});
+        reactions = await models.reaction.update({
+            reaction:false,userId:attribute.userId,postId:attribute.postId
+        },{where: {id:dislikeReactionExist.id}}
+        );
         msg = 'updated dislike'
     
     } else {
-        reactions = await models.reaction.create({reaction:false,userId:attribute.userId,postId:attribute.postId});
+        reactions = await models.reaction.create(
+            {reaction:false,userId:attribute.userId,postId:attribute.postId}
+            );
         msg = 'created dislike';
     }
     res.json(msg);
@@ -45,7 +63,9 @@ async function createDislikeReaction(req,res){
 async function destroyReaction(req,res){
     var reactions, msg;
     const attribute = req.params;
-    const reactionExist =  await models.reaction.findOne({where:{userId:attribute.userId, reaction:true, postId:attribute.postId}});
+    const reactionExist =  await models.reaction.findOne({
+        where:{userId:attribute.userId, reaction:true, postId:attribute.postId}
+    });
     if(reactionExist){
         reactions = await models.reaction.destroy({where: {id:reactionExist.id}});
         msg = 'removed like'
@@ -56,7 +76,9 @@ async function destroyReaction(req,res){
 async function destroyDislikeReaction(req,res){
     var reactions, msg;
     const attribute = req.params;
-    const reactionExist =  await models.reaction.findOne({where:{userId:attribute.userId,reaction:false, postId:attribute.postId}});
+    const reactionExist =  await models.reaction.findOne({
+        where:{userId:attribute.userId,reaction:false, postId:attribute.postId}
+    });
     if(reactionExist){
         reactions = await models.reaction.destroy({where: {id:reactionExist.id}});
         msg = 'removed dislike'

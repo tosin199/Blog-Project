@@ -6,15 +6,7 @@ class Model {
   }
 
   User = () =>{
-    return this.sequelize.define(
-      'user',
-      {
-        id:{
-          type:this.Sequelize.INTEGER,
-          allowNull:false,
-          autoIncrement:true,
-          primaryKey:true
-        },
+    return this.sequelize.define('user',{ id:{type:this.Sequelize.INTEGER,allowNull:false,autoIncrement:true,primaryKey:true},
         firstname:{
           type:this.Sequelize.STRING,
           allowNull:false
@@ -25,10 +17,13 @@ class Model {
         },
         email :{ 
           type:this.Sequelize.STRING,
-          allowNull:false
+          allowNull:false,
+          // validate:{
+          //   isEmail:true
+          // }
         },
         password:{
-          type:this.Sequelize.INTEGER,
+          type:this.Sequelize.STRING,
           allowNull:false,
           unique:true
         }
@@ -47,6 +42,9 @@ class Model {
           primaryKey:true
         }
       }
+      // ,{
+        //  freezeTableName:true,
+        // }
     );
   };
 
