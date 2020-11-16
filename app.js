@@ -8,17 +8,16 @@ var usersRouter = require('./routes/users');
 var commentRouter = require('./routes/comment');
 var reactionRouter = require('./routes/reaction')
 var shareRouter = require('./routes/share.routes');
-var newsRouter = require('./routes/news.routes');
-var postRouter = require('./routes/post.routes')
+var categoryRouter = require('./routes/category');
+var postRouter = require('./routes/post.routes');
 
-var subRouter = require('./routes/subscription')
+var subRouter = require('./routes/subscription');
 
 const db = require('./models');
-// const reaction = require('./models/reaction');
 
 var app = express();
 
-db.sequelize.sync({force:true});
+db.sequelize.sync({force:false}); 
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -34,7 +33,7 @@ app.use('/users', usersRouter);
 app.use('/comment', commentRouter);
 app.use('/reaction',reactionRouter);
 app.use('/share', shareRouter );
-app.use('/news', newsRouter);
+app.use('/category', categoryRouter);
 app.use('/post', postRouter);
 
 app.use('/user', usersRouter);
