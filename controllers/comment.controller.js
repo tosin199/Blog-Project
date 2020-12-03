@@ -2,7 +2,7 @@ const models = require('../models/index');
 
 
 async function getAllcommentOfAPost(req,res){
-    const comment = await models.comment.findAndCountAll({include:[models.user],where: {postId:req.params.postId}});
+    const comment = await models.comment.findAndCountAll({include:[models.user],attributes:['firstname','lastname']},{where: {postId:req.params.postId}});
     res.json(comment);  
 }
 

@@ -6,7 +6,8 @@ const { user } = require('./config');
 
 const sequelize = new Sequelize(connection.db, connection.user, connection.password, {
     host:connection.host,
-    dialect:connection.dialect
+    dialect:connection.dialect,
+    port: connection.port
 });
 
 const db ={};
