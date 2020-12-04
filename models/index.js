@@ -6,7 +6,8 @@ const { user } = require('./config');
 
 const sequelize = new Sequelize(connection.db, connection.user, connection.password, {
     host:connection.host,
-    dialect:connection.dialect
+    dialect:connection.dialect,
+    port: connection.port
 });
 
 const db ={};
@@ -35,7 +36,13 @@ db.comment.belongsTo(db.user);
 //share relationship
 db.user.hasMany(db.share);
 db.share.belongsTo(db.user);
-
+// async function getComment(req,res){
+//     const comment = await models.comment.findAll({include:[models.user]});
+//     res.json(comment);
+// }// async function getComment(req,res){
+//     const comment = await models.comment.findAll({include:[models.user]});
+//     res.json(comment);
+// }
 // reaction relationship
 db.reaction.belongsTo(db.user);
 db.user.hasOne(db.reaction)
