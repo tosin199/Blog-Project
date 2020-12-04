@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const passport = require('passport');
 
 var usersRouter = require('./routes/users');
 var commentRouter = require('./routes/comment');
@@ -17,7 +18,7 @@ const db = require('./models');
 
 var app = express();
 
-db.sequelize.sync({force:false}); //force:false
+db.sequelize.sync({alter: false}); //force:false
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -30,7 +31,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-app.use('/users', usersRouter);
+app.use(passport.initialize());
+require('./config/passport')(passport);
+
+
 app.use('/comment', commentRouter);
 app.use('/reaction',reactionRouter);
 app.use('/share', shareRouter );

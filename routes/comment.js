@@ -1,18 +1,19 @@
 var express = require('express');
 var router = express.Router();
+const passport = require('passport');
 
 const commentController = require('../controllers/comment.controller.js');
     //Retrieve all comment
-    router.get('/:postId', commentController.getAllcommentOfAPost)
-    router.get('/:id/user/:userId/post/:postId',commentController. getcommentOfAPost);
+router.get('/:postId',passport.authenticate("jwt",{session:false}),  commentController.getAllcommentOfAPost)
+router.get('/:id/post/:postId',passport.authenticate("jwt",{session:false}), commentController. getcommentOfAPost);
     //Create all comment of a post
-    router.post('/user/:userId/post/:postId',commentController.createComment);
+router.post('/post/:postId',passport.authenticate("jwt",{session:false}), commentController.createComment);
 
     //Update comment 
-    router.put('/:id/user/:userId/post/:postId',commentController.updateComment);
+router.put('/post/:postId',passport.authenticate("jwt",{session:false}), commentController.updateComment);
     
     //Delete comment
-    router.delete('/:id/user/:userId/post/:postId',commentController.destroyComment);
+router.delete('/post/:postId',passport.authenticate("jwt",{session:false}), commentController.destroyComment);
 
 
 module.exports = router;

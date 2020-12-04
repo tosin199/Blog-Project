@@ -1,5 +1,3 @@
-
-const { post } = require('../models/index');
 const models = require('../models/index');
 
 async function getCategory(req, res) {
@@ -10,28 +8,38 @@ async function getCategory(req, res) {
 
 async function createCategory(req, res) {
     var data = req.body;
+    const user = await models.user.findOne({where:{id:req.user.id}});
     const checkCategory = await models.category.findOne({where:{name:data.name}});
-    if (checkCategory){
-       var msg = "category already exist";
-    } else{
+    var msg;
+    if (user.isAdmin && !checkCategory){
         const category = await models.category.create(data);
-        var msg = "Category created succesfully";
+         msg = "Category created succesfully";
+    } else if(!user.isAdmin){
+        msg = "you are not an admin"
+    } else{
+         msg = "category already exist";
     }
-    res.json(msg);
+    res.json(msg)
 }
 
 async function updateCategory(req,res) {
     var data = req.body;
     var categoryId = req.params.id;
-    const category = await models.category.update({name:data.name, description: data.description},{where: {id:categoryId}})
-    res.json(category);
+    const user = await models.user.findOne({where:{id:req.user.id}});
+    if (user.isAdmin){
+        const category = await models.category.update({name:data.name, description: data.description},{where: {id:categoryId}})
+        res.json(category);
+    }
+    
 }
 
 async function deleteCategory (req, res) {
     var categoryId = req.params.id;
-    const category = await models.category.destroy({where:{id: categoryId}})
-    res.send('deleted')
-
+    const user = await models.user.findOne({where:{id:req.user.id}});
+    if (user.isAdmin){
+        const category = await models.category.destroy({where:{id: categoryId}})
+        res.send('deleted')
+    }
 }
 
 module.exports = {

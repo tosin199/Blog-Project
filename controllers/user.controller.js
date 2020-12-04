@@ -1,45 +1,145 @@
 const models = require('../models/index');
+const bcrypt = require('bcrypt');
+const JwtStartegy = require('passport-jwt').Strategy;
+const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const helpers = require('../config/helper')
+const multerConfig = require('../config/multer')
 
 async function  getUser(req,res){
-  userId = req.params.id;
-  const user = await models.user.findOne({where:{id:userId},attributes:['firstname','lastname']})
-  res.json(user);
-
+  const user = await models.user.findOne({where:{id:req.user.id},attributes:['firstname','lastname']})
+  res.json(user)
 }
 
-async function createUser(req,res){
+
+async function register(req,res){
+ 
+  const saltRounds = 10 // https://www.npmjs.com/package/bcrypt visit to know more about bcrypt
+
+  const salt = bcrypt.genSaltSync(saltRounds);
+
   var data = req.body;
-  var user, msg;
-  const checkUser = await models.user.findOne({where:{email:data.email}});
+
+  const hash = bcrypt.hashSync(data.password, salt);
+  
+  data.password = hash
+  var msg;
+  const checkUser = await models.user.findOne(
+    {
+      where:{
+      email:data.email
+      }
+    }
+    );
   if (checkUser){
     msg = "Sorry you already have an account"
   } else {
-    const user = await models.user.create({firstname:data.firstname, lastname:data.lastname,email:data.email, password:data.password});
+    const user = await models.user.create(
+      {
+        firstname:data.firstname, 
+        lastname:data.lastname,
+        email:data.email,
+        password:data.password
+      }
+    );
     msg = "Account successfully created"
   
   }
   res.json(msg);
 }
 
+async function login(req,res){ 
+  const data = req.body;
+  const email = data.email;
+  const password = data.password;
+  const user = await models.user.findOne(
+    {where:{email:email}}//attributes:['firstname','lastname']
+    );
+  if (user){
+    const checkPassword = bcrypt.compareSync(password, user.password);
+    if (!checkPassword) {
+      return res.json('Incorrect passsword')
+    } else {
+      const jwt_payload = {
+        id:user.id,
+      }
+      const token = jwt.sign(jwt_payload,"mySecret");
+      return res.json(
+        { "token":token,
+          "data":user,
+          "statusCode":200
+        }
+        )
+    }
+  } else {
+    return res.json('No account found ')
+  }
+};
+
 async function updateUser(req,res){
-  userId = req.params.id;
   var data = req.body;
-  const user = await models.user.update({firstname:data.firstname, lastname:data.lastname,email:data.email, password:data.password},{where:{id:userId}});
+  const user = await models.user.update({firstname:data.firstname, lastname:data.lastname,email:data.email, password:data.password},{where:{id:req.user.id}});
   res.json({msg:'User updated successfully'})
 
 }
   
 
 async function deleteUser(req,res){
-  userId = req.params.id;
-  const user = await models.user.destroy({where:{id:req.params.id}});
+  const user = await models.user.destroy({where:{id:req.user.id}});
   res.json({mssg:'user deleted'})
 
 }
 
+
+async function uploadProfilePicture(req,res){
+
+  multerConfig.singleUpload(req, res, async function(err) {
+
+  if (err instanceof multer.MulterError) {
+      return res.json(err.message);
+  } 
+  else if (err) {
+    return res.json(err);
+  } 
+  else if (!req.file) {
+    return res.json({"image": req.file, "msg":'Please select an image to upload'});
+  }
+  if(req.file){
+    console.log("usee>>>>>>>",req.user);
+    await models.user.update({profilePicture:req.file.path}, {where:{id:req.user.id}});
+    return  res.json({'msg': 'uploaded', 'file':req.file});
+  } 
+
+});
+}
+
+async function getUserProfilePicture(req,res){
+const picture = await  models.user.findOne({where:{id:req.user.id} ,attributes:['profilePicture']});//{attributes:['profilePicture']}
+res.json(picture);
+}
+
+// async function uploadMultiPic(req,res){
+
+//   if(req.file){
+//     return  res.json({'msg': 'uploaded',
+//     'file':req.file});
+//   } 
+// }
+async function createAdmin(req,res){
+  const user = await models.user.findOne({where:{id:req.user.id}})
+  if (user){
+    const admin = await models.user.update({isAdmin:true},{where:{id:req.user.id}})
+    res.json('Admin created')
+  }
+}
+
 module.exports = {
   getUser,
-  createUser,
+  register,
   updateUser,
-  deleteUser
+  deleteUser,
+  login,
+  uploadProfilePicture,
+  getUserProfilePicture,
+  createAdmin
 }

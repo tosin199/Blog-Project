@@ -17,10 +17,14 @@ class Model {
         },
         email :{ 
           type:this.Sequelize.STRING,
-          allowNull:false,
-          // validate:{
-          //   isEmail:true
-          // }
+          allowNull:false
+        },
+        profilePicture:{
+          type:this.Sequelize.STRING,
+          allowNull: true
+        },
+        isAdmin:{
+          type:this.Sequelize.BOOLEAN
         },
         password:{
           type:this.Sequelize.STRING,
@@ -90,6 +94,10 @@ class Model {
         allowNull: true,
         primaryKey: false
       },
+      image: {
+        type: this.Sequelize.STRING,
+        allowNull:true
+      }
     });
   };
 
@@ -135,6 +143,10 @@ class Model {
       content: {
         type: this.Sequelize.TEXT,
         allowNull: true,
+      },
+      image: {
+        type: this.Sequelize.STRING,
+        allowNull:true
       }
       }
     );
