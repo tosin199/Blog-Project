@@ -14,13 +14,13 @@ const singleUpload = multer({
     storage: storage, 
     limits: {fileSize: 1024 * 1024 },
     fileFilter: helpers.imageFilter
-}).single('profile_pic');
+}).single('pic');
 
 const multipleUpload = multer({
     storage: storage, 
-    limits: {fileSize: 1024  },
+    // limits: {fileSize: 1024  },
     fileFilter: helpers.imageFilter
-}).array('profile_pic', 5);
+}).array('pic', 5);
 
 module.exports = {
     singleUpload,

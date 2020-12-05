@@ -4,8 +4,8 @@ const passport = require('passport');
 
 const commentController = require('../controllers/comment.controller.js');
     //Retrieve all comment
-router.get('/:postId',passport.authenticate("jwt",{session:false}),  commentController.getAllcommentOfAPost)
-router.get('/:id/post/:postId',passport.authenticate("jwt",{session:false}), commentController. getcommentOfAPost);
+router.get('/:postId',  commentController.getAllcommentOfAPost)
+router.get('/:id/post/:postId', commentController. getcommentOfAPost);
     //Create all comment of a post
 router.post('/post/:postId',passport.authenticate("jwt",{session:false}), commentController.createComment);
 

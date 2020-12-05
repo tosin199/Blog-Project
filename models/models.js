@@ -46,9 +46,19 @@ class Model {
           primaryKey:true
         }
       }
-      // ,{
-        //  freezeTableName:true,
-        // }
+    );
+  };
+  categorySubScribed = () => {
+    return this.sequelize.define(
+      'categorysubscribe',
+      {
+        id:{
+          type:this.Sequelize.INTEGER,
+          allowNull:false,
+          autoIncrement:true,
+          primaryKey:true
+        },
+      }
     );
   };
 
@@ -94,12 +104,25 @@ class Model {
         allowNull: true,
         primaryKey: false
       },
-      image: {
-        type: this.Sequelize.STRING,
-        allowNull:true
-      }
     });
   };
+
+  postImages = ()=>{
+    return this.sequelize.define(
+      'postImage',{
+        id: {
+          type: this.Sequelize.INTEGER(11),
+          allowNull: false,
+          autoIncrement: true,
+          primaryKey: true
+        },
+        image: {
+          type: this.Sequelize.STRING,
+          allowNull:true
+        }
+      }
+    )
+  }
 
   reaction = () =>{
     return this.sequelize.define(

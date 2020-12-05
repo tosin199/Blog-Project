@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const shareCntrl = require ('../controllers/share.controllers');
+const passport = require('passport');
 
-router.get ('/', shareCntrl.getShare);
-router.get('/:id',shareCntrl.getOneShare);
-router.post ('/user/:userId/post/:postId', shareCntrl.createShare);
+router.get('/:id',shareCntrl.getShare);
+router.post ('/post/:postId',passport.authenticate("jwt",{session:false}), shareCntrl.createShare);
 
 
 module.exports = router;

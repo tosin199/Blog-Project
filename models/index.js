@@ -24,6 +24,8 @@ db.category = Model.category();
 db.post = Model.post();
 db.user= Model.User();
 db.sub=Model.Sub();
+db.postImage=Model.postImages();
+db.categorySubscribed = Model.categorySubScribed();
 
 //subscription relationship
 db.user.hasOne(db.sub);
@@ -36,13 +38,7 @@ db.comment.belongsTo(db.user);
 //share relationship
 db.user.hasMany(db.share);
 db.share.belongsTo(db.user);
-// async function getComment(req,res){
-//     const comment = await models.comment.findAll({include:[models.user]});
-//     res.json(comment);
-// }// async function getComment(req,res){
-//     const comment = await models.comment.findAll({include:[models.user]});
-//     res.json(comment);
-// }
+
 // reaction relationship
 db.reaction.belongsTo(db.user);
 db.user.hasOne(db.reaction)
@@ -59,7 +55,15 @@ db.post.hasMany(db.comment);
 db.comment.belongsTo(db.post);
 
 db.post.hasMany(db.share);
-db.share.belongsTo(db.post)
+db.share.belongsTo(db.post);
+
+db.post.hasMany(db.postImage);
+db.postImage.belongsTo(db.post);
+
+//subs relationship
+db.sub.hasMany(db.categorySubscribed);
+db.categorySubscribed.belongsTo(db.sub);
+
 
 
 module.exports = db;

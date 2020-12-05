@@ -3,18 +3,15 @@ const models = require('../models/index');
 async function getSub(req,res){
   const sub = await models.sub.findAll({include:[models.user]});
   res.json(sub);
-
 };
 
 async function createSubs(req,res){
-  data = req.params.id;
-  const sub = await models.sub.create({userId:data});
+  const sub = await models.sub.create({userId:req.user.id});
   res.json(sub)
 };
 
 async function deleteSubs(req,res){
-  userId = req.params.id;
-  const sub = models.sub.destroy({where:{id:userId}});
+  const sub = models.sub.destroy({where:{id:req.user.id}});
   res.send('deleted');
 
 };
