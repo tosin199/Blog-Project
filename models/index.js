@@ -64,6 +64,10 @@ db.postImage.belongsTo(db.post);
 db.sub.hasMany(db.categorySubscribed);
 db.categorySubscribed.belongsTo(db.sub);
 
+db.category.hasMany(db.categorySubscribed);
+db.categorySubscribed.belongsTo(db.category);
+
+
 
 
 module.exports = db;

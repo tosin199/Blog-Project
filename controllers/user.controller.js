@@ -142,6 +142,14 @@ async function createAdmin(req,res){
     res.json('Admin created')
   }
 }
+async function logout(req,res){
+  const User = models.user.findOne({where:{id:req.user.id}});
+  const jwt_payload = {
+    id:User.id,
+  }
+  const token = jwt.sign(jwt_payload,"mySecret");
+  await jwt.destroy(token);
+}
 
 module.exports = {
   getUser,

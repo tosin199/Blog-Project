@@ -41,11 +41,11 @@ async function createPostImages(req, res) {
 					await models.postImage.create({image:req.file.path,postId:postId})
 					return  res.json({'msg': 'post created','file':req.file,"body":req.body});
 			} else {
-					console.log(req.files);
-					for(var i= 0 ;i<=(req.files.length-1); i++){
-						console.log(req.files[i])
-						await models.postImage.create({image:req.files[i].path,postId:postId})
-					}	
+				console.log(req.files);
+				for(var i= 0 ;i<=(req.files.length-1); i++){
+					console.log(req.files[i])
+					await models.postImage.create({image:req.files[i].path,postId:postId})
+				}	
 					res.json({'msg':'uploaded','image':req.files})
 				};
 		})	
