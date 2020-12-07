@@ -1,7 +1,7 @@
 const models = require('../models/index');
 
 const multer = require('multer');
-const helpers = require('../config/helper')
+const helpers = require('../config/helper');
 const multerConfig = require('../config/multer')
 
 async function getAllcommentOfAPost(req,res){
@@ -24,10 +24,10 @@ async function createComment(req,res){
         else if (err) {
           return res.json(err);
         } else if(!req.file){
-            await models.comment.create({image:'no image yet',content:req.body.content,userId:req.user.id,postId:req.params.postId}, {where:{id:req.user.id}});
+            await models.comment.create({image:'no image yet',content:req.body.content,userId:req.user.id,postId:req.params.postId});
             return  res.json({'msg': 'uploaded', 'file':req.file,"body":req.body.content});
         } else {
-            await models.comment.create({image:req.file.path,content:req.body.content,userId:req.user.id,postId:req.params.postId}, {where:{id:req.user.id}});
+            await models.comment.create({image:req.file.path,content:req.body.content,userId:req.user.id,postId:req.params.postId});
             return  res.json({'msg': 'uploaded', 'file':req.file,"body":req.body.content});
         }
         
@@ -46,10 +46,10 @@ async function updateComment(req,res){
         else if (err) {
           return res.json(err);
         } else if(!req.file){
-            await models.comment.update({image:'no image yet',content:req.body.content,userId:req.user.id,postId:req.params.postId}, {where:{id:req.user.id}});
+            await models.comment.update({image:'no image yet',content:req.body.content,userId:req.user.id,postId:req.params.postId}, {where:{userId:req.user.id}});
             return  res.json({'msg': 'uploaded', 'file':req.file,"body":req.body.content});
         } else {
-            await models.comment.update({image:req.file.path,content:req.body.content,userId:req.user.id,postId:req.params.postId}, {where:{id:req.user.id}});
+            await models.comment.update({image:req.file.path,content:req.body.content,userId:req.user.id,postId:req.params.postId}, {where:{UserId:req.user.id}});
             return  res.json({'msg': 'uploaded', 'file':req.file,"body":req.body.content});
         }
         
@@ -73,23 +73,3 @@ module.exports = {
     destroyComment,
     getcommentOfAPost,
 };
-// console.log("usee>>>>>>>",req.files);
-//           for(var i= 0;1<(req.files.length-1); i++){
-//             await models.comment.create(
-//                 {
-//                     image:req.files[i].path,
-//                     content:data.content,
-//                     userId:req.user.id,
-//                     postId:req.params.postId
-//                 }, {
-//                     where:{id:req.user.id}
-//                     }
-//                     );
-//           }
-//           return  res.json(
-//               {
-//                   "comment":data.content,
-//                   'files':req.files
-//                 }
-//             );
-//         } 

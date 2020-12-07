@@ -11,7 +11,7 @@ async function getPost(req, res) {
 }
 async function getPosts(req,res){
   catId = req.params.id;
-  const posts = await models.post.findAndCountAll({include:[models.category]},{where:{categoryId:catId}})
+  const posts = await models.post.findAndCountAll({include:[models.category],include:[models.postImage]},{where:{categoryId:catId}})
   res.json(posts)
 }
 
@@ -19,7 +19,6 @@ async function createPostText(req,res){
 	catId = req.params.id;
 	const user = await models.user.findOne({where:{id:req.user.id}});
 	if(user.isAdmin){
-		console.log('>>>>>>>>>>>>>>>>>>')
 		await models.post.create({title:req.body.title,body:req.body.body,categoryId:catId});
   	return  res.json({'msg': 'post uploaded', "body":req.body});
 	}

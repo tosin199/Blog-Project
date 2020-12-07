@@ -52,6 +52,7 @@ async function login(req,res){
   const data = req.body;
   const email = data.email;
   const password = data.password;
+  var date;
   const user = await models.user.findOne(
     {where:{email:email}}//attributes:['firstname','lastname']
     );
@@ -60,10 +61,15 @@ async function login(req,res){
     if (!checkPassword) {
       return res.json('Incorrect passsword')
     } else {
+      if (data.remember){
+          date = 31622400; 
+      } else {
+         date = 172800;
+      }
       const jwt_payload = {
         id:user.id,
       }
-      const token = jwt.sign(jwt_payload,"mySecret");
+      const token = jwt.sign(jwt_payload,"mySecret",{expiresIn:date});
       return res.json(
         { "token":token,
           "data":user,
@@ -75,6 +81,16 @@ async function login(req,res){
     return res.json('No account found ')
   }
 };
+async function logout(req,res){
+  const jwt_payload = {
+    id:req.user.id,
+  }
+  const token = jwt.sign(jwt_payload,"mySecret");
+  await jwt.destroy(token)
+  res.json("token destroyed")
+
+
+}
 
 async function updateUser(req,res){
   var data = req.body;
@@ -118,13 +134,7 @@ const picture = await  models.user.findOne({where:{id:req.user.id} ,attributes:[
 res.json(picture);
 }
 
-// async function uploadMultiPic(req,res){
 
-//   if(req.file){
-//     return  res.json({'msg': 'uploaded',
-//     'file':req.file});
-//   } 
-// }
 async function createAdmin(req,res){
   const user = await models.user.findOne({where:{id:req.user.id}})
   if (user){
@@ -139,6 +149,7 @@ module.exports = {
   updateUser,
   deleteUser,
   login,
+  logout,
   uploadProfilePicture,
   getUserProfilePicture,
   createAdmin

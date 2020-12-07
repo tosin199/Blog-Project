@@ -6,7 +6,13 @@ class Model {
   }
 
   User = () =>{
-    return this.sequelize.define('user',{ id:{type:this.Sequelize.INTEGER,allowNull:false,autoIncrement:true,primaryKey:true},
+    return this.sequelize.define('user',
+      { 
+        id:{
+        type:this.Sequelize.INTEGER,
+        allowNull:false,autoIncrement:true,
+        primaryKey:true
+      },
         firstname:{
           type:this.Sequelize.STRING,
           allowNull:false
