@@ -14,8 +14,7 @@ async function  getUser(req,res){
 
 async function register(req,res){
  
-  const saltRounds = 10 // https://www.npmjs.com/package/bcrypt visit to know more about bcrypt
-
+  const saltRounds = 10 
   const salt = bcrypt.genSaltSync(saltRounds);
 
   var data = req.body;
@@ -130,8 +129,8 @@ async function uploadProfilePicture(req,res){
 }
 
 async function getUserProfilePicture(req,res){
-const picture = await  models.user.findOne({where:{id:req.user.id} ,attributes:['profilePicture']});//{attributes:['profilePicture']}
-res.json(picture);
+  const picture = await  models.user.findOne({where:{id:req.user.id} ,attributes:['profilePicture']});//{attributes:['profilePicture']}
+  res.json(picture);
 }
 
 
