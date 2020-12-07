@@ -118,19 +118,20 @@ const picture = await  models.user.findOne({where:{id:req.user.id} ,attributes:[
 res.json(picture);
 }
 
-// async function uploadMultiPic(req,res){
-
-//   if(req.file){
-//     return  res.json({'msg': 'uploaded',
-//     'file':req.file});
-//   } 
-// }
 async function createAdmin(req,res){
   const user = await models.user.findOne({where:{id:req.user.id}})
   if (user){
     const admin = await models.user.update({isAdmin:true},{where:{id:req.user.id}})
     res.json('Admin created')
   }
+}
+async function logout(req,res){
+  const User = models.user.findOne({where:{id:req.user.id}});
+  const jwt_payload = {
+    id:User.id,
+  }
+  const token = jwt.sign(jwt_payload,"mySecret");
+  await jwt.destroy(token);
 }
 
 module.exports = {
@@ -139,6 +140,7 @@ module.exports = {
   updateUser,
   deleteUser,
   login,
+  logout,
   uploadProfilePicture,
   getUserProfilePicture,
   createAdmin

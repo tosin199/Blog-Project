@@ -1,8 +1,15 @@
 const models = require('../models/index');
 
+
 async function getSub(req,res){
-  const sub = await models.sub.findAll({include:[models.user]});
-  res.json(sub);
+  const User = models.user.findOne({where:{id:req.user.id}});
+  if(User.isAdmin){
+    const sub = await models.sub.findAll({include:[models.user]});
+    res.json(sub);
+  } else{
+    res.json('you are not an admin');
+  }
+ 
 };
 
 async function createSubs(req,res){
