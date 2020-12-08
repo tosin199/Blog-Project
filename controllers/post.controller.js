@@ -6,12 +6,12 @@ const multerConfig = require('../config/multer');
 
 
 async function getPost(req, res) {
-  const post = await models.post.findAll({include:[models.category],include:[models.postImage]});
+  const post = await models.post.findAll({include:[{model:models.category},{model:models.postImage},{model:models.comment}],order:[['createdAt','DESC']]}); //limit:2
   res.json(post);
 }
 async function getPosts(req,res){
   catId = req.params.id;
-  const posts = await models.post.findAndCountAll({include:[models.category],include:[models.postImage]},{where:{categoryId:catId}})
+  const posts = await models.post.findAndCountAll({include:[{model:models.category},{model:models.postImage}],order:[['createdAt','DESC']]},{where:{categoryId:catId}})
   res.json(posts)
 }
 

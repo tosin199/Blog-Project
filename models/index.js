@@ -2,7 +2,6 @@ const connection = require('./config');
 const {Sequelize} = require('sequelize');
 
 const model = require('./models');
-const { user } = require('./config');
 
 const sequelize = new Sequelize(connection.db, connection.user, connection.password, {
     host:connection.host,
@@ -26,6 +25,9 @@ db.user= Model.User();
 db.sub=Model.Sub();
 db.postImage=Model.postImages();
 db.categorySubscribed = Model.categorySubScribed();
+db.commentReaction = Model.commentReaction();
+db.commentReply = Model.commentReply();
+db.commentReplyReaction = Model.commentReplyReaction();
 
 //subscription relationship
 db.user.hasOne(db.sub);
@@ -67,7 +69,24 @@ db.categorySubscribed.belongsTo(db.sub);
 db.category.hasMany(db.categorySubscribed);
 db.categorySubscribed.belongsTo(db.category);
 
+//comment relationships
+db.commentReply.belongsTo(db.user);
+db.user.hasMany(db.commentReply);
 
+db.commentReaction.belongsTo(db.user);
+db.user.hasOne(db.commentReaction);
+
+db.commentReplyReaction.belongsTo(db.user);
+db.user.hasOne(db.commentReplyReaction);
+
+db.commentReply.belongsTo(db.comment);
+db.comment.hasMany(db.commentReply);
+
+db.commentReaction.belongsTo(db.comment);
+db.comment.hasMany(db.commentReaction);
+
+db.commentReplyReaction.belongsTo(db.commentReply);
+db.commentReply.hasMany(db.commentReplyReaction);
 
 
 module.exports = db;

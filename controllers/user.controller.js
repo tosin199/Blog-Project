@@ -7,17 +7,15 @@ const helpers = require('../config/helper')
 const multerConfig = require('../config/multer')
 
 async function  getUser(req,res){
-  const user = await models.user.findOne({where:{id:req.user.id},attributes:['firstname','lastname']})
+  const user = await models.user.findOne({where:{id:req.user.id},attributes:['firstname','lastname','profilePicture']})
   res.json(user)
 }
 
 
 async function register(req,res){
- 
+  var data = req.body;
   const saltRounds = 10 
   const salt = bcrypt.genSaltSync(saltRounds);
-
-  var data = req.body;
 
   const hash = bcrypt.hashSync(data.password, salt);
   
@@ -68,7 +66,7 @@ async function login(req,res){
       const jwt_payload = {
         id:user.id,
       }
-      const token = jwt.sign(jwt_payload,"mySecret",{expiresIn:date});
+      const token = jwt.sign(jwt_payload,"mySecret");
       return res.json(
         { "token":token,
           "data":user,
@@ -141,14 +139,14 @@ async function createAdmin(req,res){
     res.json('Admin created')
   }
 }
-async function logout(req,res){
-  const User = models.user.findOne({where:{id:req.user.id}});
-  const jwt_payload = {
-    id:User.id,
-  }
-  const token = jwt.sign(jwt_payload,"mySecret");
-  await jwt.destroy(token);
-}
+// async function logout(req,res){
+//   const User = models.user.findOne({where:{id:req.user.id}});
+//   const jwt_payload = {
+//     id:User.id,
+//   }
+//   const token = jwt.sign(jwt_payload,"mySecret");
+//   await jwt.destroy(token);
+// }
 
 module.exports = {
   getUser,
