@@ -7,15 +7,15 @@ const commentController = require('../controllers/comment.controller.js');
 router.get('/:postId',  commentController.getAllcommentOfAPost)
 router.get('/:id/post/:postId', commentController. getcommentOfAPost);
 // get likes and dislikes of comment
-router.get('getCommentReaction/:id',commentController.getReactionOfAComment)
+router.get('/getCommentReaction/:id',commentController.getReactionOfAComment)
 router.get('/likes/:id',commentController.getLikesOfAPostComment);
 router.get('/dislikes/:id',commentController.getLikesOfAPostComment)
 //get replies of a comment reply
-router.get('commentReplies/:id', commentController.getRepliesOfAComment)
+router.get('/commentReplies/:id', commentController.getRepliesOfAComment)
     //Create all comment of a post
 router.post('/post/:postId',passport.authenticate("jwt",{session:false}), commentController.createComment);
 //reply a comment
-router.post('addReply/:id',passport.authenticate('jwt',{session:false}),commentController.replyComment);
+router.post('/addReply/:id',passport.authenticate('jwt',{session:false}),commentController.replyComment);
     //Update comment 
 router.put('/post/:postId',passport.authenticate("jwt",{session:false}), commentController.updateComment);
 // update comment reply

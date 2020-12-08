@@ -19,7 +19,7 @@ const singleUpload = multer({
 const multipleUpload = multer({
     storage: storage, 
     // limits: {fileSize: 1024  },
-    fileFilter: helpers.imageFilter
+    // fileFilter: helpers.imageFilter
 }).array('pic', 5);
 
 module.exports = {

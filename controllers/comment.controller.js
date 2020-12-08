@@ -11,7 +11,7 @@ async function getAllcommentOfAPost(req,res){
 
 async function getcommentOfAPost(req,res){
     commentId = req.params.id; 
-    const comment = await models.comment.findAndCountAll({include:[{model:models.user},{model:models.commentReaction},{model:models.commentReply}],order:[['createdAt','DESC']]},{where: {id: commentId,postId:req.params.postId}});
+    const comment = await models.comment.findAndCountAll({include:[{model:models.user},{model:models.commentReaction},{model:models.commentReply}],order:[['createdAt','DESC']],where: {id: commentId,postId:req.params.postId}});
     res.json(comment);  
 }
 async function getReactionOfAComment(req,res){

@@ -11,7 +11,7 @@ async function getPost(req, res) {
 }
 async function getPosts(req,res){
   catId = req.params.id;
-  const posts = await models.post.findAndCountAll({include:[{model:models.category},{model:models.postImage}],order:[['createdAt','DESC']]},{where:{categoryId:catId}})
+  const posts = await models.post.findAndCountAll({include:[{model:models.category},{model:models.postImage}],order:[['createdAt','DESC']],where:{categoryId:catId}})
   res.json(posts)
 }
 
