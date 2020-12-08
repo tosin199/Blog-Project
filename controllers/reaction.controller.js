@@ -54,6 +54,28 @@ async function createReaction(req,res){
     res.json(msg);
     
 }
+async function createCommentLikeReaction(req,res){
+    var reactions, msg;
+    const attribute = req.params;
+    const reactionExist = await models.commentReaction.findOne({
+        where:{userId:req.user.id,commentId:attribute.commentId}
+    });
+    if (reactionExist){ 
+        reactions = await models.commentReaction.update({
+            status:true,userId:req.user.id,commentId:attribute.commentId
+        },{where: {commentId:attribute.commentId}}
+        );
+        msg = 'updated like'
+
+    } else {
+        reactions = await models.reaction.create({
+            status:true,userId:req.user.id,commentId:attribute.commentId}
+        );
+        msg = 'created like'
+    
+    }
+    res.json(msg)
+}
 
 async function createDislikeReaction(req,res){{order:['createdAt']}
     var reactions, msg;
@@ -77,6 +99,26 @@ async function createDislikeReaction(req,res){{order:['createdAt']}
     
 }
 
+async function createDislikeCommentReaction(req,res){
+    var reactions, msg;
+    const attribute = req.params
+    const dislikeReactionExist = await models.commentReaction.findOne({
+        where:{userId:attribute.userId,commentId:attribute.commentId}})
+    if (dislikeReactionExist){ 
+        reactions = await models.commentReaction.update({
+            status:false,userId:req.user.id,commentId:attribute.commentId
+        },{where: {id:dislikeReactionExist.id}}
+        );
+        msg = 'updated dislike'
+    
+    } else {
+        reactions = await models.reaction.create(
+            {status:false,userId:req.user.id,commentId:attribute.commentId}
+            );
+        msg = 'created dislike';
+    }
+    res.json(msg); 
+}
 
 async function destroyReaction(req,res){
     var reactions, msg;
@@ -86,6 +128,19 @@ async function destroyReaction(req,res){
     });
     if(reactionExist){
         reactions = await models.reaction.destroy({where: {id:reactionExist.id}});
+        msg = 'removed like'
+    } else {msg = "Nothing to like"}
+      res.json(msg);
+}
+
+async function destroyCommentReaction(req,res){
+    var reactions, msg;
+    const attribute = req.params;
+    const reactionExist =  await models.commentReaction.findOne({
+        where:{userId:req.user.id, status:true, commentId:attribute.commentId}
+    });
+    if(reactionExist){
+        reactions = await models.commentReaction.destroy({where: {id:reactionExist.id}});
         msg = 'removed like'
     } else {msg = "Nothing to like"}
       res.json(msg);
@@ -103,13 +158,29 @@ async function destroyDislikeReaction(req,res){
     } else { msg = "Nothing to Dislike"}
     res.json(msg);
 }
+async function destroyCommentDislikeReaction(req,res){
+    var reactions, msg;
+    const attribute = req.params;
+    const reactionExist =  await models.commentReaction.findOne({
+        where:{userId:req.user.id,status:false, commentId:attribute.commentId}
+    });
+    if(reactionExist){
+        reactions = await models.commentReaction.destroy({where: {id:reactionExist.id}});
+        msg = 'removed dislike'
+    } else { msg = "Nothing to Dislike"}
+    res.json(msg);
+}
 
 module.exports = {
     createReaction,
     destroyDislikeReaction,
     createDislikeReaction,
     destroyReaction,
-		getOneReaction,
-		getDislikes,
-		getLikes
+	getOneReaction,
+	getDislikes,
+    getLikes,
+    createCommentLikeReaction,
+    createDislikeCommentReaction,
+    destroyCommentReaction,
+    destroyCommentDislikeReaction
 }

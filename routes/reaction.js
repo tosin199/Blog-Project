@@ -11,9 +11,13 @@ router.get('/dislike/:id',controller.getDislikes);
 router.post('/like/post/:postId',passport.authenticate("jwt",{session:false}),controller.createReaction);
 router.post('/dislike/post/:postId',passport.authenticate("jwt",{session:false}),controller.createDislikeReaction);
 
+// create comment like Reaction
+router.post('/like/post/:commentId',passport.authenticate('jwt',{session:false}),controller.createCommentLikeReaction)
+router.post('/dislike/post/:commentId',passport.authenticate('jwt',{session:false}),controller.createDislikeCommentReaction)
     // delete reaction
-router.delete('/like/user/post/:postId',passport.authenticate("jwt",{session:false}),controller.destroyReaction);
-router.delete('/dislike/user/post/:postId',passport.authenticate("jwt",{session:false}),controller.destroyDislikeReaction);
-
-
+router.delete('/like/post/:postId',passport.authenticate("jwt",{session:false}),controller.destroyReaction);
+router.delete('/dislike/post/:postId',passport.authenticate("jwt",{session:false}),controller.destroyDislikeReaction);
+//delete comment reaction
+router.delete('removeLike/:commentId',passport.authenticate('jwt',{session:false}),controller.destroyCommentReaction);
+router.delete('removeDislike/:commentId',passport.authenticate('jwt',{session:false}),controller.destroyCommentReaction);
 module.exports = router;

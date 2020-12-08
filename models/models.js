@@ -6,7 +6,13 @@ class Model {
   }
 
   User = () =>{
-    return this.sequelize.define('user',{ id:{type:this.Sequelize.INTEGER,allowNull:false,autoIncrement:true,primaryKey:true},
+    return this.sequelize.define('user',
+      { 
+        id:{
+        type:this.Sequelize.INTEGER,
+        allowNull:false,autoIncrement:true,
+        primaryKey:true
+      },
         firstname:{
           type:this.Sequelize.STRING,
           allowNull:false
@@ -174,6 +180,52 @@ class Model {
       }
     );
   };
+  commentReaction = () => {
+    return this.sequelize.define('commentReaction',
+    {
+      id: {
+        type: this.Sequelize.INTEGER,
+        autoIncrement: true,
+        allowNull: false,
+        primaryKey: true
+      },
+      status: {
+        type: this.Sequelize.BOOLEAN,
+        allowNull: true
+      }
+     })
+  };
+  commentReply = () => {
+    return this.sequelize.define('commentReply',
+    {
+      id: {
+        type: this.Sequelize.INTEGER,
+        autoIncrement: true,
+        allowNull: false,
+        primaryKey: true
+      },
+      content: {
+        type: this.Sequelize.TEXT,
+        allowNull: true
+      }
+     })
+  };
+  commentReplyReaction = () => {
+    return this.sequelize.define('commentReplyReaction',
+    {
+      id: {
+        type: this.Sequelize.INTEGER,
+        autoIncrement: true,
+        allowNull: false,
+        primaryKey: true
+      },
+      status: {
+        type: this.Sequelize.BOOLEAN,
+        allowNull: true
+      }
+     })
+  };
+
   
   
 }

@@ -7,18 +7,15 @@ const helpers = require('../config/helper')
 const multerConfig = require('../config/multer')
 
 async function  getUser(req,res){
-  const user = await models.user.findOne({where:{id:req.user.id},attributes:['firstname','lastname']})
+  const user = await models.user.findOne({where:{id:req.user.id},attributes:['firstname','lastname','profilePicture']})
   res.json(user)
 }
 
 
 async function register(req,res){
- 
-  const saltRounds = 10 // https://www.npmjs.com/package/bcrypt visit to know more about bcrypt
-
-  const salt = bcrypt.genSaltSync(saltRounds);
-
   var data = req.body;
+  const saltRounds = 10 
+  const salt = bcrypt.genSaltSync(saltRounds);
 
   const hash = bcrypt.hashSync(data.password, salt);
   
@@ -52,6 +49,7 @@ async function login(req,res){
   const data = req.body;
   const email = data.email;
   const password = data.password;
+  var date;
   const user = await models.user.findOne(
     {where:{email:email}}//attributes:['firstname','lastname']
     );
@@ -60,6 +58,11 @@ async function login(req,res){
     if (!checkPassword) {
       return res.json('Incorrect passsword')
     } else {
+      if (data.remember){
+          date = 31622400; 
+      } else {
+         date = 172800;
+      }
       const jwt_payload = {
         id:user.id,
       }
@@ -75,6 +78,16 @@ async function login(req,res){
     return res.json('No account found ')
   }
 };
+async function logout(req,res){
+  const jwt_payload = {
+    id:req.user.id,
+  }
+  const token = jwt.sign(jwt_payload,"mySecret");
+  await jwt.destroy(token)
+  res.json("token destroyed")
+
+
+}
 
 async function updateUser(req,res){
   var data = req.body;
@@ -114,9 +127,10 @@ async function uploadProfilePicture(req,res){
 }
 
 async function getUserProfilePicture(req,res){
-const picture = await  models.user.findOne({where:{id:req.user.id} ,attributes:['profilePicture']});//{attributes:['profilePicture']}
-res.json(picture);
+  const picture = await  models.user.findOne({where:{id:req.user.id} ,attributes:['profilePicture']});//{attributes:['profilePicture']}
+  res.json(picture);
 }
+
 
 async function createAdmin(req,res){
   const user = await models.user.findOne({where:{id:req.user.id}})
@@ -125,14 +139,14 @@ async function createAdmin(req,res){
     res.json('Admin created')
   }
 }
-async function logout(req,res){
-  const User = models.user.findOne({where:{id:req.user.id}});
-  const jwt_payload = {
-    id:User.id,
-  }
-  const token = jwt.sign(jwt_payload,"mySecret");
-  await jwt.destroy(token);
-}
+// async function logout(req,res){
+//   const User = models.user.findOne({where:{id:req.user.id}});
+//   const jwt_payload = {
+//     id:User.id,
+//   }
+//   const token = jwt.sign(jwt_payload,"mySecret");
+//   await jwt.destroy(token);
+// }
 
 module.exports = {
   getUser,
