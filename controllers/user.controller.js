@@ -4,7 +4,9 @@ const JwtStartegy = require('passport-jwt').Strategy;
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const helpers = require('../config/helper')
-const multerConfig = require('../config/multer')
+const multerConfig = require('../config/multer');
+require('dotenv').config()
+const nodemailer = require('nodemailer');
 
 async function  getUser(req,res){
   const user = await models.user.findOne({where:{id:req.user.id},attributes:['firstname','lastname','profilePicture']})
@@ -14,35 +16,40 @@ async function  getUser(req,res){
 
 async function register(req,res){
   var data = req.body;
-  const saltRounds = 10 
-  const salt = bcrypt.genSaltSync(saltRounds);
+  if(data.password === data.comfirmPassword){
+    const saltRounds = 10 
+    const salt = bcrypt.genSaltSync(saltRounds);
 
-  const hash = bcrypt.hashSync(data.password, salt);
-  
-  data.password = hash
-  var msg;
-  const checkUser = await models.user.findOne(
-    {
-      where:{
-      email:data.email
-      }
-    }
-    );
-  if (checkUser){
-    msg = "Sorry you already have an account"
-  } else {
-    const user = await models.user.create(
+    const hash = bcrypt.hashSync(data.password, salt);
+    
+    data.password = hash
+    var msg;
+    const checkUser = await models.user.findOne(
       {
-        firstname:data.firstname, 
-        lastname:data.lastname,
-        email:data.email,
-        password:data.password
+        where:{
+        email:data.email
+        }
       }
-    );
-    msg = "Account successfully created"
-  
+      );
+    if (checkUser){
+      msg = "Sorry you already have an account"
+    } else {
+      const user = await models.user.create(
+        {
+          firstname:data.firstname, 
+          lastname:data.lastname,
+          email:data.email,
+          password:data.password
+        }
+      );
+      msg = "Account successfully created"
+    
+    }
+    res.json(msg);
+  } else{
+    res.json('password did not match');
   }
-  res.json(msg);
+  
 }
 
 async function login(req,res){ 
@@ -54,19 +61,20 @@ async function login(req,res){
     {where:{email:email}}//attributes:['firstname','lastname']
     );
   if (user){
-    const checkPassword = bcrypt.compareSync(password, user.password);
+    const checkPassword =  bcrypt.compareSync(password, user.password);
     if (!checkPassword) {
       return res.json('Incorrect passsword')
     } else {
       if (data.remember){
-          date = 31622400; 
+        date = 31622400; 
       } else {
-         date = 172800;
+        date = 172800 ; //
       }
       const jwt_payload = {
         id:user.id,
       }
-      const token = jwt.sign(jwt_payload,"mySecret");
+      const deleteLog =  await models.isLoggedOut.destroy({where:{userId:user.id}}) 
+      const token = jwt.sign(jwt_payload,process.env.SECRET,{expiresIn:date});
       return res.json(
         { "token":token,
           "data":user,
@@ -79,11 +87,8 @@ async function login(req,res){
   }
 };
 async function logout(req,res){
-  const jwt_payload = {
-    id:req.user.id,
-  }
-  const token = jwt.sign(jwt_payload,"null");
-  res.json("logged out")
+  await models.isLoggedOut.create({userId:req.user.id,status:true});
+  res.json("logged out");
 }
 
 async function updateUser(req,res){
@@ -91,12 +96,11 @@ async function updateUser(req,res){
   const user = await models.user.update({firstname:data.firstname, lastname:data.lastname,email:data.email, password:data.password},{where:{id:req.user.id}});
   res.json({msg:'User updated successfully'})
 
-}
-  
+} 
 
 async function deleteUser(req,res){
   const user = await models.user.destroy({where:{id:req.user.id}});
-  res.json({mssg:'user deleted'})
+  res.json({msg:'user deleted'})
 
 }
 
@@ -115,7 +119,6 @@ async function uploadProfilePicture(req,res){
     return res.json({"image": req.file, "msg":'Please select an image to upload'});
   }
   if(req.file){
-    console.log("usee>>>>>>>",req.user);
     await models.user.update({profilePicture:req.file.path}, {where:{id:req.user.id}});
     return  res.json({'msg': 'uploaded', 'file':req.file});
   } 
@@ -136,7 +139,36 @@ async function createAdmin(req,res){
     res.json('Admin created')
   }
 }
+async function sendCode(req,res){
+  data = req.body;
+  const email = data.email;
+  const User = await models.user.findOne({where:{email:email}})
+  if (User){
+    
+  }
 
+}
+async function resetPassword(req,res){
+  data = req.body;
+  const codes = await models.resetPasswordCode.findOne({where:{userId:req.user.id}});
+  if(codes){
+    if(codes.code===data.code){
+      if(data.newPassword === data.comfirmPassword){
+        await models.user.update({password:newPassword});
+        res.json('password changed')
+      }else{res.json('password do not match')}
+    }else{res.json('incorrect code')}
+  }else{res.json('code not sent, try again')}
+}
+async function changePassword(req,res){
+  data = req.body;
+  if(data.newPassword === data.comfirmPassword){
+    await models.user.update({password:data.newPassword},{where:{id:req.user.id}});
+     res.json('password changed')
+  } else {
+     res.json('password do not match')
+  }
+} 
 module.exports = {
   getUser,
   register,
@@ -144,6 +176,7 @@ module.exports = {
   deleteUser,
   login,
   logout,
+  changePassword,
   uploadProfilePicture,
   getUserProfilePicture,
   createAdmin

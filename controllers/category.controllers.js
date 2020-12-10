@@ -29,6 +29,8 @@ async function updateCategory(req,res) {
     if (user.isAdmin){
         const category = await models.category.update({name:data.name, description: data.description},{where: {id:categoryId}})
         res.json(category);
+    } else{
+        res.json("you are not an admin");
     }
     
 }

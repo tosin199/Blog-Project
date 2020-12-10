@@ -28,6 +28,8 @@ db.categorySubscribed = Model.categorySubScribed();
 db.commentReaction = Model.commentReaction();
 db.commentReply = Model.commentReply();
 db.commentReplyReaction = Model.commentReplyReaction();
+db.isLoggedOut = Model.isLoggedOut();
+db.resetPasswordCode = Model.resetPasswordCode();
 
 //subscription relationship
 db.user.hasOne(db.sub);
@@ -87,6 +89,13 @@ db.comment.hasMany(db.commentReaction);
 
 db.commentReplyReaction.belongsTo(db.commentReply);
 db.commentReply.hasMany(db.commentReplyReaction);
+//loggout relationship
+db.user.hasOne(db.isLoggedOut);
+db.isLoggedOut.belongsTo(db.user);
+
+//reset code and user relationship
+db.user.hasOne(db.resetPasswordCode);
+db.resetPasswordCode.belongsTo(db.user);
 
 
 module.exports = db;

@@ -12,8 +12,8 @@ router.post('/like/post/:postId',passport.authenticate("jwt",{session:false}),co
 router.post('/dislike/post/:postId',passport.authenticate("jwt",{session:false}),controller.createDislikeReaction);
 
 // create comment like Reaction
-router.post('/like/post/:commentId',passport.authenticate('jwt',{session:false}),controller.createCommentLikeReaction)
-router.post('/dislike/post/:commentId',passport.authenticate('jwt',{session:false}),controller.createDislikeCommentReaction)
+router.post('/likeComment/:commentId',passport.authenticate('jwt',{session:false}),controller.createCommentLikeReaction)
+router.post('/dislikeComment/:commentId',passport.authenticate('jwt',{session:false}),controller.createDislikeCommentReaction)
     // delete reaction
 router.delete('/like/post/:postId',passport.authenticate("jwt",{session:false}),controller.destroyReaction);
 router.delete('/dislike/post/:postId',passport.authenticate("jwt",{session:false}),controller.destroyDislikeReaction);

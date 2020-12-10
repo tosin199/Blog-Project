@@ -10,6 +10,7 @@ router.get('/:id/post/:postId', commentController. getcommentOfAPost);
 router.get('/getCommentReaction/:id',commentController.getReactionOfAComment)
 router.get('/likes/:id',commentController.getLikesOfAPostComment);
 router.get('/dislikes/:id',commentController.getLikesOfAPostComment)
+//
 //get replies of a comment reply
 router.get('/commentReplies/:id', commentController.getRepliesOfAComment)
     //Create all comment of a post

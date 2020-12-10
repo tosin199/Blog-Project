@@ -23,7 +23,8 @@ class Model {
         },
         email :{ 
           type:this.Sequelize.STRING,
-          allowNull:false
+          allowNull:false,
+          unique:true
         },
         profilePicture:{
           type:this.Sequelize.STRING,
@@ -31,6 +32,9 @@ class Model {
         },
         isAdmin:{
           type:this.Sequelize.BOOLEAN
+        },
+        bio:{
+          type:this.Sequelize.STRING,
         },
         password:{
           type:this.Sequelize.STRING,
@@ -224,6 +228,38 @@ class Model {
         allowNull: true
       }
      })
+  };
+  isLoggedOut = () =>{
+    return this.sequelize.define(
+      'isLoggedOut',
+      {
+      id:{
+        type:this.Sequelize.INTEGER,
+        allowNull : false,
+        autoIncrement: true,
+        primaryKey: true
+      },
+      status:{
+        type:this.Sequelize.BOOLEAN,
+        allowNull: true,
+      }
+   });
+  };
+  resetPasswordCode = () =>{
+    return this.sequelize.define(
+      'resetPasswordCode',
+      {
+      id:{
+        type:this.Sequelize.INTEGER,
+        allowNull : false,
+        autoIncrement: true,
+        primaryKey: true
+      },
+      code:{
+        type:this.Sequelize.STRING,
+        allowNull: true,
+      }
+   });
   };
 
   
