@@ -207,7 +207,7 @@ async function resetPassword(req,res){
         await models.user.update({password:data.newPassword},{where:{id:codes.userId}});
         await models.resetPasswordCode.destroy({where:{code:data.code}})
         res.json('password changed')
-      }else{res.json('password do not match')}
+      }else{res.json('password did not match')}
   }else{res.json('incorrect pin')}
 }
 
@@ -226,7 +226,7 @@ async function changePassword(req,res){
       await models.user.update({password:data.newPassword},{where:{id:req.user.id}});
       res.json('password changed')
     } else {
-       res.json('password do not match')
+       res.json('password did not match')
     }
   } else{
     res.json('incorect password');
