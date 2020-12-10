@@ -194,8 +194,7 @@ async function sendCode(req,res){
   }else{res.json({'msg':'No account with this email'})}
 
 }
-async function 
-resetPassword(req,res){
+async function resetPassword(req,res){
   data = req.body;
   const codes = await models.resetPasswordCode.findOne({where:{code:data.code}});
   if(codes){
@@ -207,14 +206,12 @@ resetPassword(req,res){
       
         data.newPassword = hash
         await models.user.update({password:data.newPassword},{where:{id:codes.userId}});
-        await models.resetPasswordCode.destroy({where:{email:req.user.email}})
+        await models.resetPasswordCode.destroy({where:{code:data.code}})
         res.json('password changed')
       }else{res.json('password do not match')}
   }else{res.json('incorrect pin')}
 }
-function change(req,res){
 
-}
 async function changePassword(req,res){
   data = req.body;
   const User = await models.user.findOne({where:{id:req.user.id}});
