@@ -93,5 +93,10 @@ db.commentReply.hasMany(db.commentReplyReaction);
 db.user.hasOne(db.isLoggedOut);
 db.isLoggedOut.belongsTo(db.user);
 
+//forgetPassword
+db.user.hasMany(db.resetPasswordCode);
+db.resetPasswordCode.belongsTo(db.user);
+
+
 
 module.exports = db;

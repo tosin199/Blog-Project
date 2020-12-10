@@ -258,10 +258,6 @@ class Model {
       code:{
         type:this.Sequelize.STRING,
         allowNull: true,
-      },
-      email:{
-        type:this.Sequelize.STRING,
-        allowNull: true,
       }
    });
   };

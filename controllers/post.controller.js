@@ -12,14 +12,14 @@ const multerConfig = require('../config/multer');
 async function getPost(req,res){
 	let post = await models.post.findAndCountAll();
 	let noOfPost = post.count;
-	let pageLimit = 5;
+	let pageLimit = 3;
 	let pages = noOfPost / pageLimit;
 	let numberOfPages = Math.ceil(pages);
 	var arr = []; 
 	let off , lim; 
 	for(var i =0; i <= numberOfPages-1;i++){
 		off = pageLimit * i;
-		lim = 5
+		lim = 3
 		const posts = await models.post.findAll(
 			{
 				include:[{model:models.category},{model:models.postImage},{model:models.comment}],
@@ -34,13 +34,13 @@ async function getPosts(req,res){
   catId = req.params.id;
 	let post = await models.post.findAndCountAll({where:{categoryId:catId}});
 	let noOfPost = post.count;
-	let pageLimit = 5;
+	let pageLimit = 3;
 	let pages = noOfPost/ pageLimit;
 	let numberOfPages = Math.ceil(pages);
 	var arr = []; let off, lim; 
 	for(var i =0; i <= numberOfPages-1;i++){
 		off = pageLimit * i;
-		lim = 5
+		lim = 3
 		const posts = await models.post.findAll(
 			{
 				include:[{model:models.category},{model:models.postImage},{model:models.comment}],

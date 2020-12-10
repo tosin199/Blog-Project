@@ -73,6 +73,7 @@ async function login(req,res){
       const jwt_payload = {
         id:user.id,
       }
+      console.log(jwt_payload.id);
       const deleteLog =  await models.isLoggedOut.destroy({where:{userId:user.id}}) 
       const token = jwt.sign(jwt_payload,process.env.SECRET,{expiresIn:date});
       return res.json(
@@ -188,16 +189,16 @@ async function sendCode(req,res){
           console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
       });
     });
-    await models.resetPasswordCode.create({code:val,email:email});
+    await models.resetPasswordCode.create({code:val,userId:User.id});
     res.json({'msg':'code sent'});
   }else{res.json({'msg':'No account with this email'})}
 
 }
-async function resetPassword(req,res){
+async function 
+resetPassword(req,res){
   data = req.body;
-  const codes = await models.resetPasswordCode.findOne({where:{email:data.email}});
+  const codes = await models.resetPasswordCode.findOne({where:{code:data.code}});
   if(codes){
-    if(codes.code===data.code){
       if(data.newPassword === data.comfirmPassword){
         const saltRounds = 10 
         const salt = bcrypt.genSaltSync(saltRounds);
@@ -205,12 +206,14 @@ async function resetPassword(req,res){
         const hash = bcrypt.hashSync(data.newPassword, salt);
       
         data.newPassword = hash
-        await models.user.update({password:data.newPassword},{where:{email:data.email}});
-        await models.resetPasswordCode.destroy({where:{email:data.email}})
+        await models.user.update({password:data.newPassword},{where:{id:codes.userId}});
+        await models.resetPasswordCode.destroy({where:{email:req.user.email}})
         res.json('password changed')
       }else{res.json('password do not match')}
-    }else{res.json('incorrect code')}
-  }else{res.json('code not sent, try again')}
+  }else{res.json('incorrect pin')}
+}
+function change(req,res){
+
 }
 async function changePassword(req,res){
   data = req.body;
