@@ -16,7 +16,7 @@ async function  getUser(req,res){
 
 async function register(req,res){
   var data = req.body;
-  if(data.password === data.comfirmPassword){
+  if(data.password === data.confirmPassword){
     const saltRounds = 10 
     const salt = bcrypt.genSaltSync(saltRounds);
 
@@ -198,7 +198,7 @@ async function resetPassword(req,res){
   data = req.body;
   const codes = await models.resetPasswordCode.findOne({where:{code:data.code}});
   if(codes){
-      if(data.newPassword === data.comfirmPassword){
+      if(data.newPassword === data.confirmPassword){
         const saltRounds = 10 
         const salt = bcrypt.genSaltSync(saltRounds);
 
@@ -217,7 +217,7 @@ async function changePassword(req,res){
   const User = await models.user.findOne({where:{id:req.user.id}});
   const checkPassword =  bcrypt.compareSync(data.password, User.password);
   if(checkPassword){
-    if(data.newPassword === data.comfirmPassword){
+    if(data.newPassword === data.confirmPassword){
       const saltRounds = 10 
       const salt = bcrypt.genSaltSync(saltRounds);
 
