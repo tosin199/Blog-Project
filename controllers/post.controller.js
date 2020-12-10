@@ -3,12 +3,6 @@ const multer = require('multer');
 const helpers = require('../config/helper')
 const multerConfig = require('../config/multer');
 
-
-
-// async function getPost(req, res) {
-//   const post = await models.post.findAll({include:[{model:models.category},{model:models.postImage},{model:models.comment}],order:[['createdAt','DESC']]}); //limit:2
-//   res.json(post);
-// }
 async function getPost(req,res){
 	let post = await models.post.findAndCountAll();
 	let noOfPost = post.count;
@@ -17,7 +11,7 @@ async function getPost(req,res){
 	let numberOfPages = Math.ceil(pages);
 	var arr = []; 
 	let off , lim; 
-	for(var i =0; i <= numberOfPages-1;i++){
+	for(var i = 0; i <= numberOfPages-1;i++){
 		off = pageLimit * i;
 		lim = 3
 		const posts = await models.post.findAll(

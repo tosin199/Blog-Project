@@ -68,12 +68,11 @@ async function login(req,res){
       if (data.remember){
         date = 31622400; 
       } else {
-        date = 172800 ; //
+        date = 172800 ; //3600
       }
       const jwt_payload = {
         id:user.id,
       }
-      console.log(jwt_payload.id);
       const deleteLog =  await models.isLoggedOut.destroy({where:{userId:user.id}}) 
       const token = jwt.sign(jwt_payload,process.env.SECRET,{expiresIn:date});
       return res.json(
@@ -146,7 +145,7 @@ async function sendCode(req,res){
   const User = await models.user.findOne({where:{email:email}})
   if (User){
     let value,val;
-    value = Math.floor(1000 + Math.random() * 9000);
+    value = Math.floor(1000 + Math.random() * 9000000);
     val = value.toString();
 
     // Generate SMTP service account from ethereal.email
