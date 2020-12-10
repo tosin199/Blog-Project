@@ -5,14 +5,52 @@ const multerConfig = require('../config/multer');
 
 
 
-async function getPost(req, res) {
-  const post = await models.post.findAll({include:[{model:models.category},{model:models.postImage},{model:models.comment}],order:[['createdAt','DESC']]}); //limit:2
-  res.json(post);
+// async function getPost(req, res) {
+//   const post = await models.post.findAll({include:[{model:models.category},{model:models.postImage},{model:models.comment}],order:[['createdAt','DESC']]}); //limit:2
+//   res.json(post);
+// }
+async function getPost(req,res){
+	let post = await models.post.findAndCountAll();
+	let noOfPost = post.count;
+	let pageLimit = 3;
+	let pages = noOfPost / pageLimit;
+	let numberOfPages = Math.ceil(pages);
+	var arr = []; 
+	let off , lim; 
+	for(var i =0; i <= numberOfPages-1;i++){
+		off = pageLimit * i;
+		lim = 3
+		const posts = await models.post.findAll(
+			{
+				include:[{model:models.category},{model:models.postImage},{model:models.comment}],
+				order:[['createdAt','DESC']],
+				offset:off,limit:lim
+			})
+		arr.push(posts);
+	};
+	res.json({'msg':'there are '+ numberOfPages +' pages','post':arr});
 }
 async function getPosts(req,res){
   catId = req.params.id;
-  const posts = await models.post.findAndCountAll({include:[{model:models.category},{model:models.postImage}],order:[['createdAt','DESC']]},{where:{categoryId:catId}})
-  res.json(posts)
+	let post = await models.post.findAndCountAll({where:{categoryId:catId}});
+	let noOfPost = post.count;
+	let pageLimit = 3;
+	let pages = noOfPost/ pageLimit;
+	let numberOfPages = Math.ceil(pages);
+	var arr = []; let off, lim; 
+	for(var i =0; i <= numberOfPages-1;i++){
+		off = pageLimit * i;
+		lim = 3
+		const posts = await models.post.findAll(
+			{
+				include:[{model:models.category},{model:models.postImage},{model:models.comment}],
+				order:[['createdAt','DESC']],
+				offset:off,limit:lim,
+				where:{categoryId:catId}
+			})
+		arr.push(posts);
+	};
+	res.json({'msg':'there are '+ numberOfPages +' pages in this Category','post':arr});
 }
 
 async function createPostText(req,res){
@@ -85,7 +123,7 @@ async function updatePostImages(req,res){
 							{
 							image:req.files[i].path,
 							postId:postId
-							}, 
+							}, 	let
 						)
 					}	
 				};

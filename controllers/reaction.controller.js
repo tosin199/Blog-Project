@@ -31,6 +31,7 @@ async function getDislikes(req,res){
 	});
 	res.json(dislikes);
 }
+
 async function createReaction(req,res){
     var reactions, msg;
     const attribute = req.params;
@@ -68,7 +69,7 @@ async function createCommentLikeReaction(req,res){
         msg = 'updated like'
 
     } else {
-        reactions = await models.reaction.create({
+        reactions = await models.commentReaction.create({
             status:true,userId:req.user.id,commentId:attribute.commentId}
         );
         msg = 'created like'
@@ -112,7 +113,7 @@ async function createDislikeCommentReaction(req,res){
         msg = 'updated dislike'
     
     } else {
-        reactions = await models.reaction.create(
+        reactions = await models.commentReaction.create(
             {status:false,userId:req.user.id,commentId:attribute.commentId}
             );
         msg = 'created dislike';

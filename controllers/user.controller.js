@@ -4,7 +4,9 @@ const JwtStartegy = require('passport-jwt').Strategy;
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const helpers = require('../config/helper')
-const multerConfig = require('../config/multer')
+const multerConfig = require('../config/multer');
+require('dotenv').config()
+const nodemailer = require('nodemailer');
 
 async function  getUser(req,res){
   const user = await models.user.findOne({where:{id:req.user.id},attributes:['firstname','lastname','profilePicture']})
@@ -14,35 +16,40 @@ async function  getUser(req,res){
 
 async function register(req,res){
   var data = req.body;
-  const saltRounds = 10 
-  const salt = bcrypt.genSaltSync(saltRounds);
+  if(data.password === data.comfirmPassword){
+    const saltRounds = 10 
+    const salt = bcrypt.genSaltSync(saltRounds);
 
-  const hash = bcrypt.hashSync(data.password, salt);
-  
-  data.password = hash
-  var msg;
-  const checkUser = await models.user.findOne(
-    {
-      where:{
-      email:data.email
-      }
-    }
-    );
-  if (checkUser){
-    msg = "Sorry you already have an account"
-  } else {
-    const user = await models.user.create(
+    const hash = bcrypt.hashSync(data.password, salt);
+    
+    data.password = hash
+    var msg;
+    const checkUser = await models.user.findOne(
       {
-        firstname:data.firstname, 
-        lastname:data.lastname,
-        email:data.email,
-        password:data.password
+        where:{
+        email:data.email
+        }
       }
-    );
-    msg = "Account successfully created"
-  
+      );
+    if (checkUser){
+      msg = "Sorry you already have an account"
+    } else {
+      const user = await models.user.create(
+        {
+          firstname:data.firstname, 
+          lastname:data.lastname,
+          email:data.email,
+          password:data.password
+        }
+      );
+      msg = "Account successfully created"
+    
+    }
+    res.json(msg);
+  } else{
+    res.json('password did not match');
   }
-  res.json(msg);
+  
 }
 
 async function login(req,res){ 
@@ -54,19 +61,21 @@ async function login(req,res){
     {where:{email:email}}//attributes:['firstname','lastname']
     );
   if (user){
-    const checkPassword = bcrypt.compareSync(password, user.password);
+    const checkPassword =  bcrypt.compareSync(password, user.password);
     if (!checkPassword) {
       return res.json('Incorrect passsword')
     } else {
       if (data.remember){
-          date = 31622400; 
+        date = 31622400; 
       } else {
-         date = 172800;
+        date = 172800 ; //
       }
       const jwt_payload = {
         id:user.id,
       }
-      const token = jwt.sign(jwt_payload,"mySecret");
+      console.log(jwt_payload.id);
+      const deleteLog =  await models.isLoggedOut.destroy({where:{userId:user.id}}) 
+      const token = jwt.sign(jwt_payload,process.env.SECRET,{expiresIn:date});
       return res.json(
         { "token":token,
           "data":user,
@@ -79,15 +88,8 @@ async function login(req,res){
   }
 };
 async function logout(req,res){
-  req.logout();
-  const jwt_payload = {
-    id:req.user.id,
-  }
-  
-  const token = jwt.sign(jwt_payload,"mySecret");
-  await jwt.destroy(token)
-  res.json("You are logged out!")
-  
+  await models.isLoggedOut.create({userId:req.user.id,status:true});
+  res.json("logged out");
 }
 
 async function updateUser(req,res){
@@ -95,12 +97,11 @@ async function updateUser(req,res){
   const user = await models.user.update({firstname:data.firstname, lastname:data.lastname,email:data.email, password:data.password},{where:{id:req.user.id}});
   res.json({msg:'User updated successfully'})
 
-}
-  
+} 
 
 async function deleteUser(req,res){
   const user = await models.user.destroy({where:{id:req.user.id}});
-  res.json({mssg:'user deleted'})
+  res.json({msg:'user deleted'})
 
 }
 
@@ -119,7 +120,6 @@ async function uploadProfilePicture(req,res){
     return res.json({"image": req.file, "msg":'Please select an image to upload'});
   }
   if(req.file){
-    console.log("usee>>>>>>>",req.user);
     await models.user.update({profilePicture:req.file.path}, {where:{id:req.user.id}});
     return  res.json({'msg': 'uploaded', 'file':req.file});
   } 
@@ -140,15 +140,100 @@ async function createAdmin(req,res){
     res.json('Admin created')
   }
 }
-// async function logout(req,res){
-//   const User = models.user.findOne({where:{id:req.user.id}});
-//   const jwt_payload = {
-//     id:User.id,
-//   }
-//   const token = jwt.sign(jwt_payload,"mySecret");
-//   await jwt.destroy(token);
-// }
+async function sendCode(req,res){
+  data = req.body;
+  const email = data.email;
+  const User = await models.user.findOne({where:{email:email}})
+  if (User){
+    let value,val;
+    value = Math.floor(1000 + Math.random() * 9000);
+    val = value.toString();
 
+    // Generate SMTP service account from ethereal.email
+    nodemailer.createTestAccount((err, account) => {
+      if (err) {
+          console.error('Failed to create a testing account. ' + err.message);
+          return process.exit(1);
+      }
+
+      console.log('Credentials obtained, sending message...');
+
+      // Create a SMTP transporter object
+      let transporter = nodemailer.createTransport({
+          host: account.smtp.host,
+          port: account.smtp.port,
+          secure: account.smtp.secure,
+          auth: {
+              user: account.user,
+              pass: account.pass
+          }
+      });
+
+      // Message object
+      let message = {
+          from: '24/7 News <CodeVerification@24/7.com>',
+          to: email,
+          subject: 'Password Reset Code ✔',
+          text: val,
+          // html: '<p><b>Hello</b> to myself!</p>'
+      };
+
+      transporter.sendMail(message, (err, info) => {
+          if (err) {
+              console.log('Error occurred. ' + err.message);
+              return process.exit(1);
+          }
+
+          console.log('Message sent: %s', info.messageId);
+          // Preview only available when sending through an Ethereal account
+          console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+      });
+    });
+    await models.resetPasswordCode.create({code:val,userId:User.id});
+    res.json({'msg':'code sent'});
+  }else{res.json({'msg':'No account with this email'})}
+
+}
+async function resetPassword(req,res){
+  data = req.body;
+  const codes = await models.resetPasswordCode.findOne({where:{code:data.code}});
+  if(codes){
+      if(data.newPassword === data.comfirmPassword){
+        const saltRounds = 10 
+        const salt = bcrypt.genSaltSync(saltRounds);
+
+        const hash = bcrypt.hashSync(data.newPassword, salt);
+      
+        data.newPassword = hash
+        await models.user.update({password:data.newPassword},{where:{id:codes.userId}});
+        await models.resetPasswordCode.destroy({where:{code:data.code}})
+        res.json('password changed')
+      }else{res.json('password do not match')}
+  }else{res.json('incorrect pin')}
+}
+
+async function changePassword(req,res){
+  data = req.body;
+  const User = await models.user.findOne({where:{id:req.user.id}});
+  const checkPassword =  bcrypt.compareSync(data.password, User.password);
+  if(checkPassword){
+    if(data.newPassword === data.comfirmPassword){
+      const saltRounds = 10 
+      const salt = bcrypt.genSaltSync(saltRounds);
+
+      const hash = bcrypt.hashSync(data.newPassword, salt);
+      
+      data.newPassword = hash
+      await models.user.update({password:data.newPassword},{where:{id:req.user.id}});
+      res.json('password changed')
+    } else {
+       res.json('password do not match')
+    }
+  } else{
+    res.json('incorect password');
+  }
+  
+} 
 module.exports = {
   getUser,
   register,
@@ -156,6 +241,9 @@ module.exports = {
   deleteUser,
   login,
   logout,
+  changePassword,
+  sendCode,
+  resetPassword,
   uploadProfilePicture,
   getUserProfilePicture,
   createAdmin
