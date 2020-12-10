@@ -79,14 +79,15 @@ async function login(req,res){
   }
 };
 async function logout(req,res){
+  req.logout();
   const jwt_payload = {
     id:req.user.id,
   }
+  
   const token = jwt.sign(jwt_payload,"mySecret");
   await jwt.destroy(token)
-  res.json("token destroyed")
-
-
+  res.json("You are logged out!")
+  
 }
 
 async function updateUser(req,res){
