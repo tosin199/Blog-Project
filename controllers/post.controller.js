@@ -54,7 +54,7 @@ async function createPostText(req,res){
 	catId = req.params.id;
 	const user = await models.user.findOne({where:{id:req.user.id}});
 	if(user){
-		await models.post.create({title:req.body.title,body:req.body.body,categoryId:catId,userId:user.id});
+		await models.post.create({title:req.body.title,body:req.body.body,author:user.firstname + user.lastname,categoryId:catId,userId:user.id});
   	return  res.json({'msg': 'post uploaded', "body":req.body});
 	}
 	

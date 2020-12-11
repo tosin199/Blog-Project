@@ -120,7 +120,8 @@ class Model {
         primaryKey: false
       },
       isPublished:{
-        type:this.Sequelize.BOOLEAN
+        type:this.Sequelize.BOOLEAN,
+        defaultValue:false
       }
     });
   };

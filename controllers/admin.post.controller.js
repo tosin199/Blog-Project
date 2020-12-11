@@ -120,7 +120,7 @@ async function adminCreatePostText(req,res){
 	catId = req.params.id;
 	const user = await models.user.findOne({where:{id:req.user.id}});
 	if(user){
-		await models.post.create({title:req.body.title,body:req.body.body,categoryId:catId,userId:user.id,isPublished:true});
+		await models.post.create({title:req.body.title,body:req.body.body,author:req.body.author,categoryId:catId,userId:user.id,isPublished:true});
   	return  res.json({'msg': 'post uploaded', "body":req.body});
 	}
 	
