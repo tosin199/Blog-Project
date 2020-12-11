@@ -56,7 +56,7 @@ async function getPosts(req,res){
 async function createPostText(req,res){
 	catId = req.params.id;
 	const user = await models.user.findOne({where:{id:req.user.id}});
-	if(user.isAdmin){
+	if(user){
 		await models.post.create({title:req.body.title,body:req.body.body,categoryId:catId});
   	return  res.json({'msg': 'post uploaded', "body":req.body});
 	}
@@ -66,7 +66,7 @@ async function createPostText(req,res){
 async function createPostImages(req, res) {
 	postId = req.params.postId
 	const user = await models.user.findOne({where:{id:req.user.id}});
-	if(user.isAdmin){
+	if(user){
 		multerConfig.multipleUpload(req, res, async function(err) {
 			if (err instanceof multer.MulterError) {
 				return res.json(err.message);
@@ -87,26 +87,22 @@ async function createPostImages(req, res) {
 					res.json({'msg':'uploaded','image':req.files})
 				};
 		})	
-	} else{ 
-		res.json('you are not an admin')
-	}
+	} 
 }
 
 async function updatePost(req, res) {
     const data = req.body;
 		const postId = req.params.id;
 		const user = await models.user.findOne({where:{id:req.user.id}});
-		if(user.isAdmin){
+		if(user){
 			const post = await models.post.update({title:data.title, body: data.body},{where: {id:postId}})
 			res.json(post);
-		} else{
-			res.json('you are not an admin');
-		}
+		} 
 	}
 async function updatePostImages(req,res){
 	postId = req.params.postId
 	const user = await models.user.findOne({where:{id:req.user.id}});
-	if(user.isAmin){
+	if(user){
 		multerConfig.multipleUpload(req, res, async function(err) {
 			if (err instanceof multer.MulterError) {
 				return res.json(err.message);
@@ -128,29 +124,25 @@ async function updatePostImages(req,res){
 					}	
 				};
 		})
-	} else{
-		res.json('you are not an admin');
-	}
+	} 
 }
 
 async function deletePost(req, res) {
 		const postId = req.params.id;
 		const user = await models.user.findOne({where:{id:req.user.id}});
-		if(user.isAdmin){
+		if(user){
 			const post = await models.post.destroy({where:{id: postId}})
 			res.send('deleted')
-	}else{
-		res.json('you are not an admin')
 	}
 }
 
 
 module.exports = {
     getPost,
-		getPosts,
-		createPostText,
+	getPosts,
+	createPostText,
     createPostImages,
     updatePost,
-		deletePost,
-		updatePostImages,
+	deletePost,
+	updatePostImages,
 };
