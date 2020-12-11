@@ -3,54 +3,50 @@ const multer = require('multer');
 const helpers = require('../config/helper')
 const multerConfig = require('../config/multer');
 
-
-
-// async function getPost(req, res) {
-//   const post = await models.post.findAll({include:[{model:models.category},{model:models.postImage},{model:models.comment}],order:[['createdAt','DESC']]}); //limit:2
-//   res.json(post);
-// }
 async function getPost(req,res){
 	let post = await models.post.findAndCountAll();
 	let noOfPost = post.count;
-	let pageLimit = 3;
+	let pageLimit = parseInt(req.query.pageLimit);
+	
+	let currentPage = parseInt(req.query.currentPage);
 	let pages = noOfPost / pageLimit;
 	let numberOfPages = Math.ceil(pages);
-	var arr = []; 
-	let off , lim; 
-	for(var i =0; i <= numberOfPages-1;i++){
-		off = pageLimit * i;
-		lim = 3
-		const posts = await models.post.findAll(
+  
+	let	skip = currentPage * pageLimit
+			const posts = await models.post.findAll(
 			{
 				include:[{model:models.category},{model:models.postImage},{model:models.comment}],
-				order:[['createdAt','DESC']],
-				offset:off,limit:lim
+				order:[['updatedAt','DESC']],
+				offset:skip,limit:pageLimit
 			})
-		arr.push(posts);
-	};
-	res.json({'msg':'there are '+ numberOfPages +' pages','post':arr});
+	res.json({'msg':'there are '+ numberOfPages +' pages','data':{
+		'total':noOfPost,
+		'pages':numberOfPages,
+		'posts':posts
+	}});
 }
 async function getPosts(req,res){
   catId = req.params.id;
 	let post = await models.post.findAndCountAll({where:{categoryId:catId}});
 	let noOfPost = post.count;
-	let pageLimit = 3;
+	let pageLimit = parseInt(req.query.pageLimit);
+	let currentPage = parseInt(req.query.currentPage);
 	let pages = noOfPost/ pageLimit;
 	let numberOfPages = Math.ceil(pages);
-	var arr = []; let off, lim; 
-	for(var i =0; i <= numberOfPages-1;i++){
-		off = pageLimit * i;
+	let	skip = pageLimit * currentPage;
 		lim = 3
 		const posts = await models.post.findAll(
 			{
 				include:[{model:models.category},{model:models.postImage},{model:models.comment}],
-				order:[['createdAt','DESC']],
-				offset:off,limit:lim,
+				order:[['updatedAt','DESC']],
+				offset:skip,limit:pageLimit,
 				where:{categoryId:catId}
 			})
-		arr.push(posts);
-	};
-	res.json({'msg':'there are '+ numberOfPages +' pages in this Category','post':arr});
+			res.json({'msg':'there are '+ numberOfPages +' pages in this category','data':{
+				'total':noOfPost,
+				'pages':numberOfPages,
+				'posts':posts
+			}});
 }
 
 async function createPostText(req,res){

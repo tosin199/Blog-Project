@@ -68,12 +68,11 @@ async function login(req,res){
       if (data.remember){
         date = 31622400; 
       } else {
-        date = 172800 ; //
+        date = 172800 ; //3600
       }
       const jwt_payload = {
         id:user.id,
       }
-      console.log(jwt_payload.id);
       const deleteLog =  await models.isLoggedOut.destroy({where:{userId:user.id}}) 
       const token = jwt.sign(jwt_payload,process.env.SECRET,{expiresIn:date});
       return res.json(
@@ -146,7 +145,7 @@ async function sendCode(req,res){
   const User = await models.user.findOne({where:{email:email}})
   if (User){
     let value,val;
-    value = Math.floor(1000 + Math.random() * 9000);
+    value = Math.floor(1000 + Math.random() * 9000000);
     val = value.toString();
 
     // Generate SMTP service account from ethereal.email
@@ -208,7 +207,7 @@ async function resetPassword(req,res){
         await models.user.update({password:data.newPassword},{where:{id:codes.userId}});
         await models.resetPasswordCode.destroy({where:{code:data.code}})
         res.json('password changed')
-      }else{res.json('password do not match')}
+      }else{res.json('password did not match')}
   }else{res.json('incorrect pin')}
 }
 
@@ -227,7 +226,7 @@ async function changePassword(req,res){
       await models.user.update({password:data.newPassword},{where:{id:req.user.id}});
       res.json('password changed')
     } else {
-       res.json('password do not match')
+       res.json('password did not match')
     }
   } else{
     res.json('incorect password');
