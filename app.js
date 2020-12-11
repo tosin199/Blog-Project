@@ -11,6 +11,7 @@ var reactionRouter = require('./routes/reaction')
 var shareRouter = require('./routes/share.routes');
 var categoryRouter = require('./routes/category');
 var postRouter = require('./routes/post.routes');
+var adminPostRouter = require('./routes/users.admin');
 
 var subRouter = require('./routes/subscription');
 
@@ -37,6 +38,7 @@ app.use('/reaction',reactionRouter);
 app.use('/share', shareRouter );
 app.use('/category', categoryRouter);
 app.use('/post', postRouter);
+app.use('/adminPost', adminPostRouter);
 
 app.use('/user', usersRouter);
 app.use('/subscriptions',subRouter);

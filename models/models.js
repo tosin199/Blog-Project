@@ -114,6 +114,14 @@ class Model {
         allowNull: true,
         primaryKey: false
       },
+      author:{
+        type: this.Sequelize.STRING(2000),
+        allowNull: true,
+        primaryKey: false
+      },
+      isPublished:{
+        type:this.Sequelize.BOOLEAN
+      }
     });
   };
 

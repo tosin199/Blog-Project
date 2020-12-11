@@ -4,7 +4,7 @@ const helpers = require('../config/helper')
 const multerConfig = require('../config/multer');
 
 async function getPost(req,res){
-	let post = await models.post.findAndCountAll();
+	let post = await models.post.findAndCountAll({where:{isPublished:true}});
 	let noOfPost = post.count;
 	let pageLimit = parseInt(req.query.pageLimit);
 	
@@ -17,7 +17,8 @@ async function getPost(req,res){
 			{
 				include:[{model:models.category},{model:models.postImage},{model:models.comment}],
 				order:[['updatedAt','DESC']],
-				offset:skip,limit:pageLimit
+				offset:skip,limit:pageLimit,
+				where:{isPublished:true}
 			})
 	res.json({'msg':'there are '+ numberOfPages +' pages','data':{
 		'total':noOfPost,
@@ -27,7 +28,7 @@ async function getPost(req,res){
 }
 async function getPosts(req,res){
   catId = req.params.id;
-	let post = await models.post.findAndCountAll({where:{categoryId:catId}});
+	let post = await models.post.findAndCountAll({where:{categoryId:catId,isPublished:true}});
 	let noOfPost = post.count;
 	let pageLimit = parseInt(req.query.pageLimit);
 	let currentPage = parseInt(req.query.currentPage);
@@ -40,7 +41,7 @@ async function getPosts(req,res){
 				include:[{model:models.category},{model:models.postImage},{model:models.comment}],
 				order:[['updatedAt','DESC']],
 				offset:skip,limit:pageLimit,
-				where:{categoryId:catId}
+				where:{categoryId:catId,isPublished:true}
 			})
 			res.json({'msg':'there are '+ numberOfPages +' pages in this category','data':{
 				'total':noOfPost,
@@ -53,7 +54,7 @@ async function createPostText(req,res){
 	catId = req.params.id;
 	const user = await models.user.findOne({where:{id:req.user.id}});
 	if(user){
-		await models.post.create({title:req.body.title,body:req.body.body,categoryId:catId});
+		await models.post.create({title:req.body.title,body:req.body.body,categoryId:catId,userId:user.id});
   	return  res.json({'msg': 'post uploaded', "body":req.body});
 	}
 	
@@ -91,7 +92,7 @@ async function updatePost(req, res) {
 		const postId = req.params.id;
 		const user = await models.user.findOne({where:{id:req.user.id}});
 		if(user){
-			const post = await models.post.update({title:data.title, body: data.body},{where: {id:postId}})
+			const post = await models.post.update({title:data.title, body: data.body},{where:{id:postId,userId:user.id}})
 			res.json(post);
 		} 
 	}
@@ -127,7 +128,7 @@ async function deletePost(req, res) {
 		const postId = req.params.id;
 		const user = await models.user.findOne({where:{id:req.user.id}});
 		if(user){
-			const post = await models.post.destroy({where:{id: postId}})
+			const post = await models.post.destroy({where:{id:postId,userId:user.id}})
 			res.send('deleted')
 	}
 }

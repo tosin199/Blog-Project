@@ -64,6 +64,9 @@ db.share.belongsTo(db.post);
 db.post.hasMany(db.postImage);
 db.postImage.belongsTo(db.post);
 
+db.user.hasMany(db.post);
+db.post.belongsTo(db.user);
+
 //subs relationship
 db.sub.hasMany(db.categorySubscribed);
 db.categorySubscribed.belongsTo(db.sub);
