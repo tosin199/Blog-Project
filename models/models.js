@@ -24,7 +24,6 @@ class Model {
         email :{ 
           type:this.Sequelize.STRING,
           allowNull:false,
-          unique:true
         },
         profilePicture:{
           type:this.Sequelize.STRING,
@@ -39,7 +38,6 @@ class Model {
         password:{
           type:this.Sequelize.STRING,
           allowNull:false,
-          unique:true
         }
       }
     );
@@ -218,8 +216,7 @@ class Model {
         primaryKey: true
       },
       content: {
-        type: this.Sequelize.TEXT,
-        allowNull: true
+        type: this.Sequelize.TEXT
       }
      })
   };
@@ -250,7 +247,6 @@ class Model {
       },
       status:{
         type:this.Sequelize.BOOLEAN,
-        allowNull: true,
       }
    });
   };

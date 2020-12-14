@@ -1,4 +1,3 @@
-const { where } = require('sequelize/types');
 const models = require('../models/index');
 
 async function getOneReaction(req,res){
