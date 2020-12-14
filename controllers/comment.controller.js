@@ -52,31 +52,44 @@ async function createComment(req,res){
 
 
 async function updateComment(req,res){
-    multerConfig.singleUpload(req, res, async function(err) {
-        if (err instanceof multer.MulterError) {
-            return res.json(err.message);
-        } 
-        else if (err) {
-          return res.json(err);
-        } else if(!req.file){
-            await models.comment.update({image:'no image yet',content:req.body.content,userId:req.user.id,postId:req.params.postId}, {where:{userId:req.user.id}});
-            return  res.json({'msg': 'uploaded', 'file':req.file,"body":req.body.content});
-        } else {
-            await models.comment.update({image:req.file.path,content:req.body.content,userId:req.user.id,postId:req.params.postId}, {where:{UserId:req.user.id}});
-            return  res.json({'msg': 'uploaded', 'file':req.file,"body":req.body.content});
-        }
-        
-        }   
-    )
+    const comment = await models.comment.findOne({where:{userId:req.user.id}});
+    if(comment){
+        multerConfig.singleUpload(req, res, async function(err) {
+            if (err instanceof multer.MulterError) {
+                return res.json(err.message);
+            } 
+            else if (err) {
+              return res.json(err);
+            } else if(!req.file){
+                await models.comment.update({image:'no image yet',content:req.body.content,userId:req.user.id,postId:req.params.postId}, {where:{userId:req.user.id}});
+                return  res.json({'msg': 'uploaded', 'file':req.file,"body":req.body.content});
+            } else {
+                await models.comment.update({image:req.file.path,content:req.body.content,userId:req.user.id,postId:req.params.postId}, {where:{UserId:req.user.id}});
+                return  res.json({'msg': 'uploaded', 'file':req.file,"body":req.body.content});
+            }
+            
+            }   
+        )
+    } else{
+		res.setStatusCode = 400;
+        res.json('unauthorize')
+    }
+   
    
 };
 
 
 async function destroyComment(req,res){
+	const comment = await models.comment.findOne({where:{userId:req.user.id}});
+  if(comment){
     var commentId = req.params.id;
     var data = req.body;
     const comment = await models.comment.destroy({where: {id: commentId,userId:req.user.id,postId:req.params.postId}});
-    res.send('deleted');
+		res.send('deleted');
+	} else {
+		res.setStatusCode = 400;
+		res.json('unauthorize')
+	}
 }
 async function replyComment(req,res){
 	commentId = req.params.id;
@@ -84,13 +97,25 @@ async function replyComment(req,res){
 	res.json({'msg':'comment created','comment':comment})
 }
 async function editCommentReply(req,res){
+	const comment = await models.comment.findOne({where:{userId:req.user.id}});
+  if(comment){
 	commentId = req.params.id;
 	const comment = await models.commentReply.update({content:req.body.content,userId:req.user.id,commentId:req.params.id})
-	res.json({'msg':'comment updated','comment':comment})
+	res.json({'msg':'comment updated','comment':comment});
+	} else {
+		res.setStatusCode = 400;
+		res.json('unauthorize')
+	}
 }
 async function deleteCommentReply(req,res){
+const comment = await models.comment.findOne({where:{userId:req.user.id}});
+  if(comment){
 	commentId = req.params.id;
 	const comment = await models.commentReply.destroy({where:{commentId:commentId,userId:req.user.id}})
+	} else {
+		res.setStatusCode = 400;
+		res.json('unauthorize')
+	}
 }
 async function getRepliesOfAComment(req,res){
 	commentId = req.params.id;
@@ -102,13 +127,13 @@ module.exports = {
     createComment,
     updateComment,
     destroyComment,
-		getcommentOfAPost,
-		getReactionOfAComment,
-		getLikesOfAPostComment,
-		getDislikesOfAPostComment,
-		replyComment,
-		getRepliesOfAComment,
-		editCommentReply,
-		deleteCommentReply
+	getcommentOfAPost,
+	getReactionOfAComment,
+	getLikesOfAPostComment,
+	getDislikesOfAPostComment,
+	replyComment,
+	getRepliesOfAComment,
+	editCommentReply,
+	deleteCommentReply
 
 };

@@ -1,3 +1,4 @@
+const { where } = require('sequelize/types');
 const models = require('../models/index');
 
 async function getOneReaction(req,res){
@@ -123,33 +124,48 @@ async function createDislikeCommentReaction(req,res){
 
 async function destroyReaction(req,res){
     var reactions, msg;
-    const attribute = req.params;
-    const reactionExist =  await models.reaction.findOne({
-        where:{userId:req.user.id, reaction:true, postId:attribute.postId}
-    });
-    if(reactionExist){
-        reactions = await models.reaction.destroy({where: {id:reactionExist.id}});
-        msg = 'removed like'
-    } else {msg = "Nothing to like"}
-      res.json(msg);
+    const check = await models.reaction.findOne({where:{id:{userId:req.user.id}}})
+    if(check){
+			const attribute = req.params;
+			const reactionExist =  await models.reaction.findOne({
+					where:{userId:req.user.id, reaction:true, postId:attribute.postId}
+			});
+			if(reactionExist){
+					reactions = await models.reaction.destroy({where: {id:reactionExist.id}});
+					msg = 'removed like'
+			} else {msg = "Nothing to like"}
+				res.json(msg);
+    } else {
+			res.setStatusCode = 400;
+			res.json('unauthorize')
+		}
+    
 }
 
 async function destroyCommentReaction(req,res){
     var reactions, msg;
-    const attribute = req.params;
-    const reactionExist =  await models.commentReaction.findOne({
-        where:{userId:req.user.id, status:true, commentId:attribute.commentId}
-    });
-    if(reactionExist){
-        reactions = await models.commentReaction.destroy({where: {id:reactionExist.id}});
-        msg = 'removed like'
-    } else {msg = "Nothing to like"}
-      res.json(msg);
+		const attribute = req.params;
+		const check = await models.commentReaction.findOne({where:{id:{userId:req.user.id}}})
+    if(check){
+			const reactionExist =  await models.commentReaction.findOne({
+					where:{userId:req.user.id, status:true, commentId:attribute.commentId}
+			});
+			if(reactionExist){
+					reactions = await models.commentReaction.destroy({where: {id:reactionExist.id}});
+					msg = 'removed like'
+			} else {msg = "Nothing to like"}
+				res.json(msg);
+		}else {
+			res.setStatusCode = 400;
+			res.json('unauthorize')
+		}
 }
 
 async function destroyDislikeReaction(req,res){
     var reactions, msg;
-    const attribute = req.params;
+		const attribute = req.params;
+		const check = await models.reaction.findOne({where:{id:{userId:req.user.id}}})
+    if(check){
     const reactionExist =  await models.reaction.findOne({
         where:{userId:req.user.id,reaction:false, postId:attribute.postId}
     });
@@ -157,11 +173,17 @@ async function destroyDislikeReaction(req,res){
         reactions = await models.reaction.destroy({where: {id:reactionExist.id}});
         msg = 'removed dislike'
     } else { msg = "Nothing to Dislike"}
-    res.json(msg);
+		res.json(msg);
+		} else{
+			res.setStatusCode = 400;
+			res.json('unauthorize')
+		}	
 }
 async function destroyCommentDislikeReaction(req,res){
     var reactions, msg;
-    const attribute = req.params;
+		const attribute = req.params;
+		const check = await models.commentReaction.findOne({where:{id:{userId:req.user.id}}})
+    if(check){
     const reactionExist =  await models.commentReaction.findOne({
         where:{userId:req.user.id,status:false, commentId:attribute.commentId}
     });
@@ -169,7 +191,11 @@ async function destroyCommentDislikeReaction(req,res){
         reactions = await models.commentReaction.destroy({where: {id:reactionExist.id}});
         msg = 'removed dislike'
     } else { msg = "Nothing to Dislike"}
-    res.json(msg);
+		res.json(msg);
+		}	 else{
+			res.setStatusCode = 400;
+			res.json('unauthorize')
+		}
 }
 
 module.exports = {
