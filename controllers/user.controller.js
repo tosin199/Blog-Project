@@ -93,7 +93,7 @@ async function logout(req,res){
 
 async function updateUser(req,res){
   var data = req.body;
-  const user = await models.user.update({firstname:data.firstname, lastname:data.lastname,email:data.email, password:data.password},{where:{id:req.user.id}});
+  const user = await models.user.update({firstname:data.firstname, lastname:data.lastname,bio:data.bio},{where:{id:req.user.id}});
   res.json({msg:'User updated successfully'})
 
 } 

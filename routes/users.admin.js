@@ -5,12 +5,12 @@ const postCntrl = require('../controllers/post.controller');
 const passport = require('passport');
 
 
-router.get ('/', adminController.adminGetPost);
-router.get ('/unpublished', adminController.adminGetUnpublishedPost);
-router.get('/category/:id',adminController.adminGetPosts);
-router.get('/publish',adminController.adminGetUnpublishedPosts);
-router.post('/unpublish',adminController.adminPublishPost);
-router.post('/unpublished/category/:id',adminController.adminUnpublishPost);
+router.get ('/',passport.authenticate("jwt",{session:false}), adminController.adminGetPost);
+router.get ('/unpublished',passport.authenticate("jwt",{session:false}), adminController.adminGetUnpublishedPost);
+router.get('/category/:id',passport.authenticate("jwt",{session:false}),adminController.adminGetPosts);
+router.get('/publish',passport.authenticate("jwt",{session:false}),adminController.adminGetUnpublishedPosts);
+router.post('/publish/:id', passport.authenticate("jwt",{session:false}),adminController.adminPublishPost);
+router.post('/unpublish/:id',passport.authenticate("jwt",{session:false}),adminController.adminUnpublishPost);
 router.post ('/create/:id',passport.authenticate("jwt",{session:false}),adminController.adminCreatePostText);
 router.post('/createImage/:postId',passport.authenticate("jwt",{session:false}),postCntrl.createPostImages);
 router.put('/editImage/:postId',passport.authenticate("jwt",{session:false}),postCntrl.updatePostImages);

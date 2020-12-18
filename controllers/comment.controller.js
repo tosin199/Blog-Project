@@ -26,8 +26,23 @@ async function getLikesOfAPostComment(req,res){
 }
 async function getDislikesOfAPostComment(req,res){
 	commentId = req.params.id; 
-	const commentReaction = await models.commentReaction.findAndCountAll({include:[models.user]},{where:{commentId:commentId,status:false}})
+	const commentReaction = await models.commentReaction.findAndCountAll({include:[models.user]},{where:{commentReplyId:commentId,status:false}})
 	res.json(commentReaction)
+}
+async function getCommentReplyReaction(req,res){
+	commentId = req.params.id; 
+	const commentReaction = await models.commentReaction.findAndCountAll({include:[models.user]},{where:{commentIdReplyId:commentId}})
+	res.json(commentReaction);
+}
+async function getCommentReplyLikes(req,res){
+	commentId = req.params.id; 
+	const commentReaction = await models.commentReaction.findAndCountAll({include:[models.user]},{where:{commentReplyId:commentId,status:true}})
+	res.json(commentReaction);
+}
+async function getCommentReplyDislikes(req,res){
+	commentId = req.params.id; 
+	const commentReaction = await models.commentReaction.findAndCountAll({include:[models.user]},{where:{commentId:commentId,status:false}})
+	res.json(commentReaction);
 }
 async function createComment(req,res){
     multerConfig.singleUpload(req, res, async function(err) {
@@ -122,6 +137,11 @@ async function getRepliesOfAComment(req,res){
 	const comments = await models.commentReply.findAndCountAll({include:[{model:models.user},{model:models.commentReplyReaction}]},{where:{commentId:commentId}});
 	res.json(comments);
 }
+async function getReplyOfAComment(req,res){
+	commentId = req.params.id;
+	const comments = await models.commentReply.findAndCountAll({include:[{model:models.user},{model:models.commentReplyReaction}]},{where:{commentId:commentId,id:req.params.replyId}});
+	res.json(comments);
+}
 module.exports = {
     getAllcommentOfAPost,
     createComment,
@@ -134,6 +154,10 @@ module.exports = {
 	replyComment,
 	getRepliesOfAComment,
 	editCommentReply,
-	deleteCommentReply
+    deleteCommentReply,
+    getCommentReplyDislikes,
+    getCommentReplyReaction,
+    getCommentReplyLikes,
+    getReplyOfAComment
 
 };
