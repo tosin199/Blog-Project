@@ -7,7 +7,7 @@ const helpers = require('../config/helper')
 const multerConfig = require('../config/multer');
 require('dotenv').config()
 // const nodemailer = require('nodemailer');
-const mailjet = require('node-mailjet');
+
 
 async function  getUser(req,res){
   const user = await models.user.findOne({where:{id:req.user.id},attributes:['firstname','lastname','profilePicture']})
@@ -148,33 +148,40 @@ async function sendCode(req,res){
     let value,val;
     value = Math.floor(1000 + Math.random() * 9000000);
     val = value.toString();
-    
-    mailjet.connect(
-      process.env.MJ_APIKEY_PUBLIC,
-      process.env.MJ_APIKEY_PRIVATE
-    );
-    const request = await mailjet.post('send', { version: 'v3.1' }).request({
-      Messages: [
+    const mailjet = require ('node-mailjet')
+    .connect(process.env.MAILJET_PUBLIC,process.env.MAILJET_PRIVATE,)
+    const request = mailjet
+    .post("send", {'version': 'v3.1'})
+    .request({
+      "Messages":[
         {
-          From: {
-            Email: 'ask4ismailsadiq@gmail.com',
-            Name: 'IDrip',
+          "From": {
+            "Email": "ask4ismailsadiq@gmail.com",
+            "Name": "IDrip"
           },
-          To: [
+          "To": [
             {
-              Email: email,
-              Name: User.firstname+' '+User.lastname,
-            },
+              "Email": email,
+              "Name": User.firstname+' '+User.lastname
+            }
           ],
-          Subject: 'Password Reset Code ✔',
-          TextPart: val,
-          // HTMLPart:
-        },
-      ],
+          "Subject": " Password Reset Code ✔",
+          "TextPart": val,
+          // "HTMLPart": "<h3>Dear passenger 1, welcome to <a href='https://www.mailjet.com/'>Mailjet</a>!</h3><br />May the delivery force be with you!",
+          "CustomID": "AppGettingStartedTest"
+        }
+      ]
     })
-    console.log(result.body);
+    request
+      .then((result) => {
+        console.log(result.body)
+      })
+      .catch((err) => {
+        console.log(err.statusCode)
+      })
     await models.resetPasswordCode.create({code:val,userId:User.id});
     res.json({'msg':'code sent'});
+    
   }else{res.json({'msg':'No account with this email'})}
 
 }
@@ -214,7 +221,7 @@ async function changePassword(req,res){
        res.json('password did not match')
     }
   } else{
-    res.json('incorect password');
+    res.json('incorrect password');
   }
   
 } 
