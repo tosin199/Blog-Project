@@ -26,6 +26,11 @@ async function getPost(req,res){
 		'posts':posts
 	}});
 }
+async function getAPost(req,res){
+	postId = req.query.id
+	const post = await models.post.findOne({where:{id:req.params.id},include:[{model:models.category},{model:models.postImage},{model:models.comment}]});
+	res.json(post);
+}
 async function getPosts(req,res){
   catId = req.params.id;
 	let post = await models.post.findAndCountAll({where:{categoryId:catId,isPublished:true}});
@@ -135,7 +140,8 @@ async function deletePost(req, res) {
 
 
 module.exports = {
-    getPost,
+		getPost,
+		getAPost,
 	getPosts,
 	createPostText,
     createPostImages,
