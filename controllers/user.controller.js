@@ -74,7 +74,7 @@ async function login(req,res){
       const jwt_payload = {
         id:user.id,
       }
-      const deleteLog =  await models.isLoggedOut.destroy({where:{userId:user.id}}) 
+       await models.isLoggedOut.destroy({where:{userId:user.id}}) 
       const token = jwt.sign(jwt_payload,process.env.SECRET,{expiresIn:date});
       return res.json(
         { "token":token,
