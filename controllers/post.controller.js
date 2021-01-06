@@ -113,7 +113,7 @@ async function updatePostImages(req,res){
 			} else if(!req.files && !req.file){
 					res.json('No files picked')
 			} else if(req.file) {
-					await models.postImage.update({image:req.file.path,postId:postId})
+					await models.postImage.update({image:req.file.path,postId:postId},{where:{postId:postId}})
 					return  res.json({'msg': 'post created','file':req.files,"body":req.body});
 			} else {
 					for(var i= 0;i<=(req.files.length-1); i++){
@@ -121,7 +121,9 @@ async function updatePostImages(req,res){
 							{
 							image:req.files[i].path,
 							postId:postId
-							}, 	let
+							},{
+								where:{postId:postId}
+							}
 						)
 					}	
 				};
