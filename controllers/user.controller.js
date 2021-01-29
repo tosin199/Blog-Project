@@ -6,7 +6,6 @@ const multer = require('multer');
 const helpers = require('../config/helper')
 const multerConfig = require('../config/multer');
 require('dotenv').config()
-// const nodemailer = require('nodemailer');
 
 
 async function  getUser(req,res){

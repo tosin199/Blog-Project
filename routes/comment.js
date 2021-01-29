@@ -52,7 +52,7 @@ router.get('/commentReplies/:id',
 );
 router.get('/:id/commentReply/:replyId',
 	cors.cors, 
-	commentController.getRepliesOfAComment
+	commentController.getReplyOfAComment
 );
 
     //Create a comment of a post
@@ -68,7 +68,7 @@ router.post('/addReply/:id',
 	commentController.replyComment
 );
     //Update comment 
-router.put('/post/:postId',
+router.put('/commentId/:id',
 	cors.corsWithOptions,
 	passport.authenticate("jwt",{session:false}), 
 	commentController.updateComment
