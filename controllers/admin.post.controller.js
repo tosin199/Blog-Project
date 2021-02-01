@@ -129,7 +129,6 @@ async function createPost(req, res) {
 			} else {
 				const post = await models.post.create({title:req.body.title,body:req.body.body,author:user.firstname + user.lastname,categoryId:catId,userId:user.id,isPublished:true});
 				for(var i= 0 ;i<=(req.files.length-1); i++){
-					console.log(req.files[i])
 					await models.postImage.create({image:req.files[i].path,postId:post.id})
 				}	
 					res.json({'msg':'uploaded','image':req.files})
