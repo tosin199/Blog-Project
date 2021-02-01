@@ -55,18 +55,9 @@ async function getPosts(req,res){
 			}});
 }
 
-async function createPostText(req,res){
-	catId = req.params.id;
-	const user = await models.user.findOne({where:{id:req.user.id}});
-	if(user){
-		await models.post.create({title:req.body.title,body:req.body.body,author:user.firstname + user.lastname,categoryId:catId,userId:user.id});
-  	return  res.json({'msg': 'post uploaded', "body":req.body});
-	}
-	
-}
 
-async function createPostImages(req, res) {
-	postId = req.params.postId
+async function createPost(req, res) {
+	catId = req.params.id
 	const user = await models.user.findOne({where:{id:req.user.id}});
 	if(user){
 		multerConfig.multipleUpload(req, res, async function(err) {
@@ -76,15 +67,10 @@ async function createPostImages(req, res) {
 					return res.json(err);
 			} else if(!req.files && !req.file){
 					res.json('No files picked')
-			} else if(req.file) {
-				console.log('inpoint')
-					await models.postImage.create({image:req.file.path,postId:postId})
-					return  res.json({'msg': 'post created','file':req.file,"body":req.body});
 			} else {
-				console.log(req.files);
+				const post = await models.post.create({title:req.body.title,body:req.body.body,author:user.firstname + user.lastname,categoryId:catId,userId:user.id});
 				for(var i= 0 ;i<=(req.files.length-1); i++){
-					console.log(req.files[i])
-					await models.postImage.create({image:req.files[i].path,postId:postId})
+					await models.postImage.create({image:req.files[i].path,postId:post.id})
 				}	
 					res.json({'msg':'uploaded','image':req.files})
 				};
@@ -92,16 +78,7 @@ async function createPostImages(req, res) {
 	} 
 }
 
-async function updatePost(req, res) {
-    const data = req.body;
-		const postId = req.params.id;
-		const user = await models.user.findOne({where:{id:req.user.id}});
-		if(user){
-			const post = await models.post.update({title:data.title, body: data.body},{where:{id:postId,userId:user.id}})
-			res.json(post);
-		} 
-	}
-async function updatePostImages(req,res){
+async function updatePost(req,res){
 	postId = req.params.postId
 	const user = await models.user.findOne({where:{id:req.user.id}});
 	if(user){
@@ -112,10 +89,18 @@ async function updatePostImages(req,res){
 					return res.json(err);
 			} else if(!req.files && !req.file){
 					res.json('No files picked')
-			} else if(req.file) {
-					await models.postImage.update({image:req.file.path,postId:postId},{where:{postId:postId}})
-					return  res.json({'msg': 'post created','file':req.files,"body":req.body});
 			} else {
+				const post = await models.post.update(
+					{
+						title:req.body.title
+						,body:req.body.body,
+						author:user.firstname + user.lastname,
+						categoryId:catId,userId:user.id
+					},
+					{
+						where:{postId:postId}
+					}
+					);
 					for(var i= 0;i<=(req.files.length-1); i++){
 						await models.postImage.update(
 							{
@@ -144,10 +129,9 @@ async function deletePost(req, res) {
 module.exports = {
 		getPost,
 		getAPost,
-	getPosts,
-	createPostText,
-    createPostImages,
+		getPosts,
+		createPost,
     updatePost,
-	deletePost,
-	updatePostImages,
+		deletePost,
+		updatePost,
 };

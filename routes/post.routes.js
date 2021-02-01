@@ -19,20 +19,16 @@ router.get('/category/:id',
   cors.cors,
   postCntrl.getPosts
 );
-router.post ('/create/:id',
-  cors.corsWithOptions,
-  passport.authenticate("jwt",{session:false}), 
-  postCntrl.createPostText
-);
-router.post('/createImage/:postId',
+
+router.post('/create/:id',
   cors.corsWithOptions,
   passport.authenticate("jwt",{session:false}),
-  postCntrl.createPostImages
+  postCntrl.createPost
 );
-router.put('/editImage/:postId',
+router.put('/edit/:postId',
   cors.corsWithOptions,
   passport.authenticate("jwt",{session:false}),
-  postCntrl.updatePostImages
+  postCntrl.updatePost
 );
 router.put ('/:id',
   cors.corsWithOptions,

@@ -42,17 +42,13 @@ router.post('/unpublish/:id',
 router.post ('/create/:id',
   cors.corsWithOptions,
   passport.authenticate("jwt",{session:false}),
-  adminController.adminCreatePostText
+  adminController.createPost
 );
-router.post('/createImage/:postId',
-  cors.corsWithOptions,
-  passport.authenticate("jwt",{session:false}),
-  postCntrl.createPostImages
-);
+
 router.put('/editImage/:postId',
   cors.corsWithOptions,
   passport.authenticate("jwt",{session:false}),
-  postCntrl.updatePostImages
+  postCntrl.updatePost
 );
 router.put ('/:id',
   cors.corsWithOptions,
