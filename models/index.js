@@ -29,7 +29,7 @@ db.commentReaction = Model.commentReaction();
 db.commentReply = Model.commentReply();
 db.commentReplyReaction = Model.commentReplyReaction();
 db.isLoggedOut = Model.isLoggedOut();
-db.resetPasswordCode = Model.resetPasswordCode();
+db.otpCode = Model.otpCode();
 
 //subscription relationship
 db.user.hasOne(db.sub);
@@ -97,8 +97,8 @@ db.user.hasOne(db.isLoggedOut);
 db.isLoggedOut.belongsTo(db.user);
 
 //forgetPassword
-db.user.hasMany(db.resetPasswordCode);
-db.resetPasswordCode.belongsTo(db.user);
+db.user.hasMany(db.otpCode);
+db.otpCode.belongsTo(db.user);
 
 
 

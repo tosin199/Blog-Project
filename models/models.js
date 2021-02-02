@@ -250,9 +250,9 @@ class Model {
       }
    });
   };
-  resetPasswordCode = () =>{
+  otpCode = () =>{
     return this.sequelize.define(
-      'resetPasswordCode',
+      'otpCode',
       {
       id:{
         type:this.Sequelize.INTEGER,

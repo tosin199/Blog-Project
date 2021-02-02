@@ -5,12 +5,18 @@ const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const helpers = require('../config/helper')
 const multerConfig = require('../config/multer');
+const methods = require('../helpers/method');
 require('dotenv').config()
 
 
 async function  getUser(req,res){
-  const user = await models.user.findOne({where:{id:req.user.id},attributes:['firstname','lastname','profilePicture']})
-  res.json(user)
+  const user = await models.user.findOne(
+    {
+      where:{id:req.user.id},
+      attributes:['firstname','lastname','profilePicture']
+    }
+  );
+  return res.json(user)
 }
 
 
@@ -43,11 +49,14 @@ async function register(req,res){
         }
       );
       msg = "Account successfully created"
-    
+      const name = user.firstname+' '+user.lastname
+      const email = user.email
+      let val = methods.generateCode();
+      methods.sendAccountVerificationCode(email,name,val);
     }
-    res.json(msg);
+    return res.json(msg);
   } else{
-    res.json('password did not match');
+    return res.json('password did not match');
   }
   
 }
@@ -87,20 +96,36 @@ async function login(req,res){
   }
 };
 async function logout(req,res){
-  await models.isLoggedOut.create({userId:req.user.id,status:true});
-  res.json("logged out");
+  await models.isLoggedOut.create(
+    {
+      userId:req.user.id,status:true
+    }
+  );
+  return res.json("logged out");
 }
 
 async function updateUser(req,res){
   var data = req.body;
-  const user = await models.user.update({firstname:data.firstname, lastname:data.lastname,bio:data.bio},{where:{id:req.user.id}});
-  res.json({msg:'User updated successfully'})
+  const user = await models.user.update(
+    {
+      firstname:data.firstname,
+      lastname:data.lastname,bio:data.bio
+    },
+    {
+      where:{id:req.user.id}
+    }
+  );
+  return res.json({msg:'User updated successfully'})
 
 } 
 
 async function deleteUser(req,res){
-  const user = await models.user.destroy({where:{id:req.user.id}});
-  res.json({msg:'user deleted'})
+  const user = await models.user.destroy(
+    {
+      where:{id:req.user.id}
+    }
+  );
+  return res.json({msg:'user deleted'})
 
 }
 
@@ -127,58 +152,51 @@ async function uploadProfilePicture(req,res){
 }
 
 async function getUserProfilePicture(req,res){
-  const picture = await  models.user.findOne({where:{id:req.user.id} ,attributes:['profilePicture']});//{attributes:['profilePicture']}
-  res.json(picture);
+  const picture = await  models.user.findOne(
+    {
+      where:{id:req.user.id} ,attributes:['profilePicture']
+    }
+  );//{attributes:['profilePicture']}
+  return res.json(picture);
 }
 
 
 async function createAdmin(req,res){
-  const user = await models.user.findOne({where:{id:req.user.id}})
+  const user = await models.user.findOne(
+    {
+      where:{id:req.user.id}
+    }
+  )
   if (user){
-    const admin = await models.user.update({isAdmin:true},{where:{id:req.user.id}})
-    res.json('Admin created')
+    const admin = await models.user.update(
+      {
+        isAdmin:true
+      },
+      {
+        where:{id:req.user.id}
+      }
+    )
+    return res.json('Admin created')
   }
 }
 async function sendCode(req,res){
   data = req.body;
   const email = data.email;
-  const User = await models.user.findOne({where:{email:email}})
+  const User = await models.user.findOne(
+    {
+      where:{email:email}
+    }
+  )
   if (User){
-    let value,val;
-    value = Math.floor(1000 + Math.random() * 9000000);
-    val = value.toString();
-    const mailjet = require ('node-mailjet')
-    .connect(process.env.MAILJET_PUBLIC,process.env.MAILJET_PRIVATE,)
-    const request = mailjet
-    .post("send", {'version': 'v3.1'})
-    .request({
-      "Messages":[
-        {
-          "From": {
-            "Email": "ask4ismailsadiq@gmail.com",
-            "Name": "IDrip"
-          },
-          "To": [
-            {
-              "Email": email,
-              "Name": User.firstname+' '+User.lastname
-            }
-          ],
-          "Subject": " Password Reset Code ✔",
-          "TextPart": val,
-          // "HTMLPart": "<h3>Dear passenger 1, welcome to <a href='https://www.mailjet.com/'>Mailjet</a>!</h3><br />May the delivery force be with you!",
-          "CustomID": "AppGettingStartedTest"
-        }
-      ]
-    })
-    request
-      .then((result) => {
-        console.log(result.body)
-      })
-      .catch((err) => {
-        console.log(err.statusCode)
-      })
-    await models.resetPasswordCode.create({code:val,userId:User.id});
+    const name = User.firstname+' '+User.lastname
+    let val = helpers.generateCode();
+    helpers.AccountResetCode(email,name,val);
+
+    await models.otpCode.create(
+      {
+        code:val,userId:User.id
+      }
+    );
     res.json({'msg':'code sent'});
     
   }else{res.json({'msg':'No account with this email'})}
@@ -186,25 +204,48 @@ async function sendCode(req,res){
 }
 async function resetPassword(req,res){
   data = req.body;
-  const codes = await models.resetPasswordCode.findOne({where:{code:data.code}});
+  const codes = await models.otpCode.findOne(
+    {
+      where:{code:data.code}
+    }
+  );
   if(codes){
-      if(data.newPassword === data.confirmPassword){
-        const saltRounds = 10 
-        const salt = bcrypt.genSaltSync(saltRounds);
+    if(data.newPassword === data.confirmPassword){
+      const saltRounds = 10 
+      const salt = bcrypt.genSaltSync(saltRounds);
 
-        const hash = bcrypt.hashSync(data.newPassword, salt);
+      const hash = bcrypt.hashSync(data.newPassword, salt);
       
-        data.newPassword = hash
-        await models.user.update({password:data.newPassword},{where:{id:codes.userId}});
-        await models.resetPasswordCode.destroy({where:{code:data.code}})
-        res.json('password changed')
-      }else{res.json('password did not match')}
-  }else{res.json('incorrect pin')}
+      data.newPassword = hash
+      await models.user.update(
+        {
+          password:data.newPassword
+        },
+        {
+          where:{id:codes.userId}
+        }
+      );
+      await models.otpCode.destroy(
+        {
+          where:{code:data.code}
+        }
+      )
+      return res.json('password changed')
+    }else{
+      return res.json('password did not match')
+    }
+  }else{
+    return res.json('incorrect pin')
+  }
 }
 
 async function changePassword(req,res){
   data = req.body;
-  const User = await models.user.findOne({where:{id:req.user.id}});
+  const User = await models.user.findOne(
+    {
+      where:{id:req.user.id}
+    }
+  );
   const checkPassword =  bcrypt.compareSync(data.password, User.password);
   if(checkPassword){
     if(data.newPassword === data.confirmPassword){
@@ -214,13 +255,20 @@ async function changePassword(req,res){
       const hash = bcrypt.hashSync(data.newPassword, salt);
       
       data.newPassword = hash
-      await models.user.update({password:data.newPassword},{where:{id:req.user.id}});
-      res.json('password changed')
+      await models.user.update(
+        {
+          password:data.newPassword
+        },
+        {
+          where:{id:req.user.id}
+        }
+      );
+      return res.json('password changed')
     } else {
-       res.json('password did not match')
+      return res.json('password did not match')
     }
   } else{
-    res.json('incorrect password');
+    return res.json('incorrect password');
   }
   
 } 
