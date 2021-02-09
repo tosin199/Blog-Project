@@ -13,7 +13,8 @@ async function  getUser(req,res){
   const user = await models.user.findOne(
     {
       where:{id:req.user.id},
-      attributes:['firstname','lastname','profilePicture']
+      attributes:['firstname','lastname','bio','profilePicture',"email",
+      "profilePicture","isVerified"]
     }
   );
   return res.json({status:'success',data:user})
@@ -103,7 +104,12 @@ async function login(req,res){
   const user = await models.user.findOne(
     {
       where:{email:email},
-      // attributes:['firstname','lastname','password']
+      attributes:["id","firstname",
+      "lastname",
+      "email",
+      "profilePicture",
+      "password"
+      ]
     }
     );
   if (user){

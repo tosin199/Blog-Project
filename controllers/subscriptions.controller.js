@@ -7,7 +7,7 @@ async function createSubs(req,res){
       userId:req.user.id
     }
   );
-  res.json({'message':'user subscribed','status':'success',})
+  res.json({'status':'success','message':'user subscribed'})
 };
 async function getSubscribers(req,res){
   const User = await models.user.findOne(
@@ -26,7 +26,7 @@ async function getSubscribers(req,res){
     )
     res.json(Sub)
   }else{
-    res.json("you are not admin");
+    res.json({'status':'success','message':"you are not admin"});
   }
 }
 async function createCategorySub(req,res){
@@ -43,9 +43,9 @@ async function createCategorySub(req,res){
         categoryId:req.body.category
       }
     );
-    return res.json("category subscribed");
+    return res.json({'status':'success','message':"category subscribed"});
   }
-  return res.json('user not subscribed')
+  return res.json({'status':'success','message':'user not subscribed'})
   
 }
 async function updateCategorySub(req,res){
@@ -55,20 +55,20 @@ async function updateCategorySub(req,res){
       categoryId:req.body.category
     }
   );
-  res.json("category subscribed");
+  res.json({'status':'success','message':"category subscribed"});
 }
 async function unsubscribe(req,res){
   const categorySub = await models.sub.destroy(
     {UseriId:req.user.id}
   );
-  res.json("category unsubscribed");
+  res.json({'status':'success','message':"category unsubscribed"});
 }
 
 async function deleteSubs(req,res){
   const sub = models.sub.destroy(
     {where:{id:req.user.id}}
   );
-  res.send('deleted');
+  res.json({'status':'success','message':'deleted'});
 
 };
 async function sendSubsMail(req,res){

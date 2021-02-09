@@ -21,13 +21,13 @@ async function adminGetPost(req,res){
             order:[['updatedAt','DESC']],
             offset:skip,limit:pageLimit
           })
-        res.json({'msg':'there are '+ numberOfPages +' pages','data':{
+        res.json({'status':'success','message':'there are '+ numberOfPages +' pages','data':{
             'total':noOfPost,
             'pages':numberOfPages,
             'posts':posts
         }});
     } else{
-			res.json('you are not an admin')
+			res.json({'status':'success','message':'you are not an admin'})
 		}
 	
 }
@@ -49,13 +49,13 @@ async function adminGetUnpublishedPost(req,res){
             order:[['updatedAt','DESC']],
             offset:skip,limit:pageLimit
           })
-        res.json({'msg':'there are '+ numberOfPages +' pages','data':{
+        res.json({'status':'success','message':'there are '+ numberOfPages +' pages','data':{
             'total':noOfPost,
             'pages':numberOfPages,
             'posts':posts
         }});
     } else{
-			res.json('you are not an admin')
+			res.json({'status':'success','message':'you are not an admin'})
 		}
 	
 }
@@ -77,13 +77,13 @@ async function adminGetPosts(req,res){
 					offset:skip,limit:pageLimit,
 					where:{categoryId:catId}
 				})
-				res.json({'msg':'there are '+ numberOfPages +' pages in this category','data':{
+				res.json({'status':'success','message':'there are '+ numberOfPages +' pages in this category','data':{
 					'total':noOfPost,
 					'pages':numberOfPages,
 					'posts':posts
 				}});
 	} else{
-		res.json('you are not an admin')
+		res.json({'status':'success','message':'you are not an admin'})
 	}
 }
 async function adminGetUnpublishedPosts(req,res){
@@ -105,13 +105,13 @@ async function adminGetUnpublishedPosts(req,res){
 					offset:skip,limit:pageLimit,
 					where:{categoryId:catId,isPublished:false}
 				})
-				res.json({'msg':'there are '+ numberOfPages +' pages in this category','data':{
+				res.json({'message':'there are '+ numberOfPages +' pages in this category','data':{
 					'total':noOfPost,
 					'pages':numberOfPages,
 					'posts':posts
 				}});
 	} else{
-		res.json('you are not an admin')
+		res.json({'status':'success','message':'you are not an admin'})
 	}
 }
 
@@ -125,13 +125,13 @@ async function createPost(req, res) {
 			} else if (err) {
 					return res.json(err);
 			} else if(!req.files && !req.file){
-					res.json('No files picked')
+					res.json({'status':'success','message':'No files picked'})
 			} else {
 				const post = await models.post.create({title:req.body.title,body:req.body.body,author:user.firstname + user.lastname,categoryId:catId,userId:user.id,isPublished:true});
 				for(var i= 0 ;i<=(req.files.length-1); i++){
 					await models.postImage.create({image:req.files[i].path,postId:post.id})
 				}	
-					res.json({'msg':'uploaded','image':req.files})
+					res.json({'status':'success','message':'uploaded','image':req.files})
 				};
 		})	
 	} 
@@ -143,7 +143,7 @@ async function adminUpdatePost(req, res) {
 		const user = await models.user.findOne({where:{id:req.user.id}});
 		if(user){
 			const post = await models.post.update({title:data.title, body: data.body},{where:{id:postId,userId:user.id,isPublished:true}})
-			res.json(post);
+			res.json({'status':'success','message':post});
 		} 
 }
 async function adminPublishPost(req, res) {
@@ -151,7 +151,7 @@ async function adminPublishPost(req, res) {
 	const user = await models.user.findOne({where:{id:req.user.id}});
 	if(user.isAdmin){
 		const post = await models.post.update({isPublished:true},{where:{id:postId}})
-		res.json(post);
+		res.json({'status':'success','message':post});
 	} 
 }
 async function adminUnpublishPost(req, res) {
@@ -161,7 +161,7 @@ async function adminUnpublishPost(req, res) {
 		const post = await models.post.update({isPublished:false},{where:{id:postId}})
 		res.json(post);
 	} else{
-		res.json('you are not an admin')
+		res.json({'status':'success','message':'you are not an admin'})
 	}
 }
 

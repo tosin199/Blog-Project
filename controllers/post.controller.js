@@ -20,7 +20,7 @@ async function getPost(req,res){
 				offset:skip,limit:pageLimit,
 				where:{isPublished:true}
 			})
-	res.json({'msg':'there are '+ numberOfPages +' pages','data':{
+	res.json({'status':'success','message':'there are '+ numberOfPages +' pages','data':{
 		'total':noOfPost,
 		'pages':numberOfPages,
 		'posts':posts
@@ -29,7 +29,7 @@ async function getPost(req,res){
 async function getAPost(req,res){
 	postId = req.query.id
 	const post = await models.post.findOne({where:{id:req.params.id},include:[{model:models.category},{model:models.postImage},{model:models.comment}]});
-	res.json(post);
+	res.json({'status':'success','data':post});
 }
 async function getPosts(req,res){
   catId = req.params.id;
@@ -48,7 +48,7 @@ async function getPosts(req,res){
 				offset:skip,limit:pageLimit,
 				where:{categoryId:catId,isPublished:true}
 			})
-			res.json({'msg':'there are '+ numberOfPages +' pages in this category','data':{
+			res.json({'status':'success','message':'there are '+ numberOfPages +' pages in this category','data':{
 				'total':noOfPost,
 				'pages':numberOfPages,
 				'posts':posts
@@ -70,9 +70,9 @@ async function createPost(req, res) {
 			} else {
 				const post = await models.post.create({title:req.body.title,body:req.body.body,author:user.firstname + user.lastname,categoryId:catId,userId:user.id});
 				for(var i= 0 ;i<=(req.files.length-1); i++){
-					await models.postImage.create({image:req.files[i].path,postId:post.id})
+					await  models.postImage.create({image:req.files[i].path,postId:post.id})
 				}	
-					res.json({'msg':'uploaded','image':req.files})
+					res.json({'status':'success','message':'uploaded','image':post})
 				};
 		})	
 	} 
@@ -88,7 +88,7 @@ async function updatePost(req,res){
 			} else if (err) {
 					return res.json(err);
 			} else if(!req.files && !req.file){
-					res.json('No files picked')
+					res.json({'status':'success','message':'No files picked'})
 			} else {
 				const post = await models.post.update(
 					{
@@ -110,8 +110,9 @@ async function updatePost(req,res){
 								where:{postId:postId}
 							}
 						)
-					}	
-				};
+					}
+					res.json({'status':'success','message':'updated','image':post})	
+			};
 		})
 	} 
 }
@@ -121,7 +122,7 @@ async function deletePost(req, res) {
 		const user = await models.user.findOne({where:{id:req.user.id}});
 		if(user){
 			const post = await models.post.destroy({where:{id:postId,userId:user.id}})
-			res.send('deleted')
+			res.send({'status':'success','message':'deleted'})
 	}
 }
 async function createImpression(req,res){
@@ -146,7 +147,7 @@ async function createImpression(req,res){
      where:{id:id}
    }
 	)
-  res.json('impression created');
+  res.json({'status':'success','message':'impression created'});
 }
 async function getImpression(req,res){
   const id = req.params.id
@@ -156,7 +157,7 @@ async function getImpression(req,res){
       attributes:['impressions']
     }
   )
-  res.json(impression);
+  res.json({'status':'success','data':impression});
 }
 
 
