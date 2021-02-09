@@ -53,6 +53,10 @@ async function register(req,res){
       const email = user.email
       let val = methods.generateCode();
       methods.sendAccountVerificationCode(email,name,val);
+      await models.otpCode.create({
+        code:val,
+        userId:user.id
+      })
     }
     return res.json(msg);
   } else{
@@ -60,7 +64,37 @@ async function register(req,res){
   }
   
 }
+async function verifyAccount(req,res){
+  const data = req.body;
+  const response ={
+      "status":"",
+      "message":"",
+      "data":""
+  }
+  const user = await models.otpCode.findOne(
+    {
+      where:{code:data.code}
+    }
+  );
+  if(user){
+    const update = await models.user.update(
+      {
+        isVerified:true
+      },
+      {
+        where:{id:user.userId}
+      }
+    )
+    await models.otpCode.destroy(
+      {
+       where:{id:user.id}
+      }
+   );
+   return res.json({'msg':'account verified','status':'success'})
+  }
 
+  return res.json({'msg':'incorrect pin','status':'success'})
+}
 async function login(req,res){ 
   const data = req.body;
   const email = data.email;
@@ -284,5 +318,6 @@ module.exports = {
   resetPassword,
   uploadProfilePicture,
   getUserProfilePicture,
-  createAdmin
+  createAdmin,
+  verifyAccount
 }

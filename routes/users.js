@@ -63,6 +63,9 @@ router.post('/createAdmin',
   cors.corsWithOptions,
   passport.authenticate('jwt',{session:false}),controller.createAdmin
 );
-
+router.post('/verify',
+  cors.cors,
+ controller.verifyAccount
+);
 
 module.exports = router;

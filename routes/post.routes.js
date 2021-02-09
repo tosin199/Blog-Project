@@ -40,5 +40,13 @@ router.delete ('/:id',
   passport.authenticate("jwt",{session:false}), 
   postCntrl.deletePost
 );
+router.post('/impression/:id',
+  cors.cors,
+  postCntrl.createImpression
+);
+router.get('/impression/:id',
+  cors.cors,
+  postCntrl.getImpression
+);
 
 module.exports = router;

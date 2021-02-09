@@ -124,6 +124,40 @@ async function deletePost(req, res) {
 			res.send('deleted')
 	}
 }
+async function createImpression(req,res){
+  const id = req.params.id
+  const post = await models.post.findOne(
+    {
+      where:{id:id}
+    }
+	)
+	let impression;
+	if(post.impressions){
+		impression = parseFloat(post.impressions);
+		impression +=1;
+	} else{
+		impression = 1;
+	}
+  await models.post.update(
+   {
+     impressions:impression
+   },
+   {
+     where:{id:id}
+   }
+	)
+  res.json('impression created');
+}
+async function getImpression(req,res){
+  const id = req.params.id
+  const impression = await models.post.findOne(
+    {
+      where:{id:id},
+      attributes:['impressions']
+    }
+  )
+  res.json(impression);
+}
 
 
 module.exports = {
@@ -134,4 +168,6 @@ module.exports = {
     updatePost,
 		deletePost,
 		updatePost,
+		createImpression,
+		getImpression
 };

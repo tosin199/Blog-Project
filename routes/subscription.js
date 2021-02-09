@@ -37,6 +37,11 @@ router.delete('/:id',
   passport.authenticate("jwt",{session:false}),
   controller.deleteSubs
 );
+router.post('/mail',
+  cors.corsWithOptions,
+  passport.authenticate('jwt',{session:false}),
+  controller.sendSubsMail
+);
 
 
 module.exports = router;

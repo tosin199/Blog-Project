@@ -35,6 +35,10 @@ class Model {
         bio:{
           type:this.Sequelize.STRING,
         },
+        isVerified:{
+          type:this.Sequelize.STRING,
+          defaultValue:false
+        },
         password:{
           type:this.Sequelize.STRING,
           allowNull:false,
@@ -116,6 +120,10 @@ class Model {
         type: this.Sequelize.STRING(2000),
         allowNull: true,
         primaryKey: false
+      },
+      impressions:{
+        type:this.Sequelize.STRING,
+        defaultValue:0
       },
       isPublished:{
         type:this.Sequelize.BOOLEAN,
