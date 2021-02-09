@@ -66,17 +66,22 @@ async function createPost(req, res) {
 			} else if (err) {
 					return res.json(err);
 			} else if(!req.files && !req.file){
-					res.json('No files picked')
+					res.json({'status':'success','message':'No files picked'})
 			} else {
-				const post = await models.post.create({title:req.body.title,body:req.body.body,author:user.firstname + user.lastname,categoryId:catId,userId:user.id});
-				for(var i= 0 ;i<=(req.files.length-1); i++){
-					await  models.postImage.create({image:req.files[i].path,postId:post.id})
-				}	
-					res.json({'status':'success','message':'uploaded','image':post})
-				};
+				if(user.firstname,user.bio){
+					const post = await models.post.create({title:req.body.title,body:req.body.body,author:user.firstname + user.lastname,categoryId:catId,userId:user.id,isPublished:true});
+					for(var i= 0 ;i<=(req.files.length-1); i++){
+						await  models.postImage.create({image:req.files[i].path,postId:post.id})
+					}	
+						return res.json({'status':'success','message':'uploaded','data':post});
+				}
+				return res.json({'status':'success','message':'account not complete'});
+				
+			};
 		})	
 	} 
 }
+
 
 async function updatePost(req,res){
 	postId = req.params.postId
@@ -159,7 +164,6 @@ async function getImpression(req,res){
   )
   res.json({'status':'success','data':impression});
 }
-
 
 module.exports = {
 		getPost,

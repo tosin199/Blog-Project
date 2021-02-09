@@ -73,9 +73,10 @@ async function deleteSubs(req,res){
 };
 async function sendSubsMail(req,res){
   const user = req.user;
+  const id  = user.id
   const subscription = await models.sub.findOne(
     {
-      where:{userId:user.id}
+      where:{userId:id}
     }
   );
   if(subscription){
@@ -91,13 +92,12 @@ async function sendSubsMail(req,res){
           where:{categoryId:categories[i].categoryId}
         }
       );
-      // if(post.impressions>=process.env.IMPRESSION){
-      //   posts.push(post)
-      // } 
-      console.log(post);
+      if(post.impressions>=process.env.IMPRESSION){
+        posts.push(post)
+      } 
     } 
-    sendSubsMail(user,posts);
-    return res.json(user)
+    // sendSubsMail(user,posts);
+    return res.json(posts)
   }
   return res.json({'status':'success','message':'user not subscribed'})
 }
