@@ -16,7 +16,7 @@ async function  getUser(req,res){
       attributes:['firstname','lastname','profilePicture']
     }
   );
-  return res.json(user)
+  return res.json({status:'success',data:user})
 }
 
 
@@ -29,7 +29,7 @@ async function register(req,res){
     const hash = bcrypt.hashSync(data.password, salt);
     
     data.password = hash
-    var msg;
+    var message;
     const checkUser = await models.user.findOne(
       {
         where:{
@@ -38,7 +38,7 @@ async function register(req,res){
       }
       );
     if (checkUser){
-      msg = "Sorry you already have an account"
+      message = 'Sorry you already have an account'
     } else {
       const user = await models.user.create(
         {
@@ -48,7 +48,7 @@ async function register(req,res){
           password:data.password
         }
       );
-      msg = "Account successfully created"
+      message = 'Account successfully created'
       const name = user.firstname+' '+user.lastname
       const email = user.email
       let val = methods.generateCode();
@@ -58,18 +58,18 @@ async function register(req,res){
         userId:user.id
       })
     }
-    return res.json(msg);
+    return res.json({status:'success','message':message});
   } else{
-    return res.json('password did not match');
+    return res.json({status:'success','message':'password do not match'});
   }
   
 }
 async function verifyAccount(req,res){
   const data = req.body;
   const response ={
-      "status":"",
-      "message":"",
-      "data":""
+      'status':'true',
+      'message':'success',
+      'data':null
   }
   const user = await models.otpCode.findOne(
     {
@@ -90,10 +90,10 @@ async function verifyAccount(req,res){
        where:{id:user.id}
       }
    );
-   return res.json({'msg':'account verified','status':'success'})
+   return res.json({'message':'account verified','status':'success'})
   }
 
-  return res.json({'msg':'incorrect pin','status':'success'})
+  return res.json({'message':'incorrect pin','status':'success'})
 }
 async function login(req,res){ 
   const data = req.body;
@@ -101,7 +101,10 @@ async function login(req,res){
   const password = data.password;
   var date;
   const user = await models.user.findOne(
-    {where:{email:email}}//attributes:['firstname','lastname']
+    {
+      where:{email:email},
+      attributes:['firstname','lastname','password']
+    }
     );
   if (user){
     const checkPassword =  bcrypt.compareSync(password, user.password);
@@ -119,14 +122,14 @@ async function login(req,res){
        await models.isLoggedOut.destroy({where:{userId:user.id}}) 
       const token = jwt.sign(jwt_payload,process.env.SECRET,{expiresIn:date});
       return res.json(
-        { "token":token,
-          "data":user,
-          "statusCode":200
+        { 'token':token,
+          'data':user,
+          'statusCode':200
         }
         )
     }
   } else {
-    return res.json('No account found ')
+    return res.json({status:'success','message':'No account found '})
   }
 };
 async function logout(req,res){
@@ -135,7 +138,7 @@ async function logout(req,res){
       userId:req.user.id,status:true
     }
   );
-  return res.json("logged out");
+  return res.json({status:'success','message':'logged out'});
 }
 
 async function updateUser(req,res){
@@ -149,7 +152,7 @@ async function updateUser(req,res){
       where:{id:req.user.id}
     }
   );
-  return res.json({msg:'User updated successfully'})
+  return res.json({status:'success',message:'User updated successfully'})
 
 } 
 
@@ -159,7 +162,7 @@ async function deleteUser(req,res){
       where:{id:req.user.id}
     }
   );
-  return res.json({msg:'user deleted'})
+  return res.json({status:'true',message:'user deleted'})
 
 }
 
@@ -175,11 +178,11 @@ async function uploadProfilePicture(req,res){
     return res.json(err);
   } 
   else if (!req.file) {
-    return res.json({"image": req.file, "msg":'Please select an image to upload'});
+    return res.json({status:'true','image': req.file, 'message':'Please select an image to upload'});
   }
   if(req.file){
     await models.user.update({profilePicture:req.file.path}, {where:{id:req.user.id}});
-    return  res.json({'msg': 'uploaded', 'file':req.file});
+    return  res.json({status:'true',message: 'uploaded', 'file':req.file});
   } 
 
 });
@@ -191,7 +194,7 @@ async function getUserProfilePicture(req,res){
       where:{id:req.user.id} ,attributes:['profilePicture']
     }
   );//{attributes:['profilePicture']}
-  return res.json(picture);
+  return res.json({'status':'success','data':picture});
 }
 
 
@@ -210,7 +213,7 @@ async function createAdmin(req,res){
         where:{id:req.user.id}
       }
     )
-    return res.json('Admin created')
+    return res.json({'status':'succcess','message':'Admin created'})
   }
 }
 async function sendCode(req,res){
@@ -231,9 +234,9 @@ async function sendCode(req,res){
         code:val,userId:User.id
       }
     );
-    res.json({'msg':'code sent'});
+    res.json({'message':'code sent'});
     
-  }else{res.json({'msg':'No account with this email'})}
+  }else{res.json({'status':'success','message':'No account with this email'})}
 
 }
 async function resetPassword(req,res){
@@ -264,12 +267,12 @@ async function resetPassword(req,res){
           where:{code:data.code}
         }
       )
-      return res.json('password changed')
+      return res.json({'status':'success','message':'password changed'})
     }else{
-      return res.json('password did not match')
+      return res.json({'status':'error','message':'password did not match'})
     }
   }else{
-    return res.json('incorrect pin')
+    return res.json({'status':'success','message':'incorrect pin'})
   }
 }
 
@@ -297,12 +300,12 @@ async function changePassword(req,res){
           where:{id:req.user.id}
         }
       );
-      return res.json('password changed')
+      return res.json({'status':'success','message':'password changed'})
     } else {
-      return res.json('password did not match')
+      return res.json({'status':'success','message':'password did not match'})
     }
   } else{
-    return res.json('incorrect password');
+    return res.json({'status':'success','message':'incorrect password'});
   }
   
 } 

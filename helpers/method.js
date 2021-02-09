@@ -13,7 +13,7 @@ async function sendAccountResetCode(email,name,val){
       "Messages":[
         {
           "From": {
-            "Email": "noreply@i-drip.com",
+            "Email": "ask4ismailsadiq@gmail.com",
             "Name": "IDrip support"
           },
           "To": [
@@ -46,7 +46,7 @@ async function sendAccountVerificationCode(email,name,val){
       "Messages":[
         {
           "From": {
-            "Email": "noreply@i-drip.com",
+            "Email": "ask4ismailsadiq@gmail.com",
             "Name": "IDrip support"
           },
           "To": [
