@@ -103,7 +103,7 @@ async function login(req,res){
   const user = await models.user.findOne(
     {
       where:{email:email},
-      attributes:['firstname','lastname','password']
+      // attributes:['firstname','lastname','password']
     }
     );
   if (user){
