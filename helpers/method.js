@@ -70,7 +70,13 @@ async function sendAccountVerificationCode(email,name,val){
         console.log(err.statusCode)
       })
 }
-async function subscriptionEmail(){
+async function subscriptionEmail(user,posts){
+  let email = user.email;
+  let name = user.firstname + user.lastname
+  let div = ''
+  for(let i=0;i<posts.length;i++){
+    div+=`<div><a href=${process.env.URL}/${posts[i].id} alt=${posts[i].title}>${posts[i].title}</a></div>`
+  }
   const mailjet = require ('node-mailjet')
     .connect(process.env.MAILJET_PUBLIC,process.env.MAILJET_PRIVATE,)
     const request = mailjet
@@ -79,8 +85,8 @@ async function subscriptionEmail(){
       "Messages":[
         {
           "From": {
-            "Email": "noreply@i-drip.com",
-            "Name": "IDrip support"
+            "Email": "ask4ismailsadiq@gmail.com",
+            "Name": "IDrip"
           },
           "To": [
             {
@@ -88,9 +94,9 @@ async function subscriptionEmail(){
               "Name": name
             }
           ],
-          "Subject": " Account Verification Code ✔",
-          "TextPart": val,
-          // "HTMLPart": "<h3>Dear passenger 1, welcome to <a href='https://www.mailjet.com/'>Mailjet</a>!</h3><br />May the delivery force be with you!",
+          "Subject": `${user.firstname,user.lastname}'s Weekly Digest`,
+          // "TextPart": ,
+          "HTMLPart": `<div>Weeks featured posts</div><div>${div}</div>`,
           "CustomID": "AppGettingStartedTest"
         }
       ]

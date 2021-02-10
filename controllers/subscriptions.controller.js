@@ -87,17 +87,26 @@ async function sendSubsMail(req,res){
     );
     const posts = []
     for(let i=0;i<categories.length;i++){
-      const post = await models.post.findOne(
-        {
-          where:{categoryId:categories[i].categoryId}
+      for(let j=0;j<process.env.LIMIT;j++){
+        const impressions = await models.post.findOne(
+          {
+            where:{categoryId:categories[i].categoryId},
+            attributes:['impressions']
+          }
+        );
+        const post = await models.post.findOne(
+          {
+            where:{categoryId:categories[i].categoryId}
+          }
+        );
+        if(impressions >= process.env.IMPRESSION){
+          posts.push(post)
         }
-      );
-      if(post.impressions>=process.env.IMPRESSION){
-        posts.push(post)
+      
       } 
     } 
-    // sendSubsMail(user,posts);
-    return res.json(posts)
+    helpers.subscriptionEmail(user,posts);
+    return res.json({'status':'success','message':'email sent'})
   }
   return res.json({'status':'success','message':'user not subscribed'})
 }
